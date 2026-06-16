@@ -66,6 +66,27 @@ main()
     expect(hasEdge(graph, "mod::main.py", "mod::helpers.py", "imports")).toBe(true);
     expect(hasEdge(graph, "main.py::run", "helpers.py::work", "calls")).toBe(true);
   });
+
+  test("resuelve llamadas en funciones anidadas", async () => {
+    const graph = await run(pythonAnalyzer, [
+      [
+        "nested.py",
+        `def outer():
+    def inner():
+        leaf()
+    inner()
+
+def leaf():
+    pass
+`,
+      ],
+    ]);
+
+    expect(hasNode(graph, "nested.py::outer")).toBe(true);
+    expect(hasNode(graph, "nested.py::inner")).toBe(true);
+    expect(hasEdge(graph, "nested.py::outer", "nested.py::inner", "calls")).toBe(true);
+    expect(hasEdge(graph, "nested.py::inner", "nested.py::leaf", "calls")).toBe(true);
+  });
 });
 
 describe("javascriptAnalyzer", () => {
@@ -97,6 +118,30 @@ main();
 
     expect(hasEdge(graph, "mod::main.js", "mod::helpers.js", "imports")).toBe(true);
     expect(hasEdge(graph, "main.js::run", "helpers.js::work", "calls")).toBe(true);
+  });
+
+  test("detecta llamadas dentro de condicionales y loops", async () => {
+    const graph = await run(javascriptAnalyzer, [
+      [
+        "flow.js",
+        `function main(flag, items) {
+  if (flag) {
+    helper();
+  }
+  for (const item of items) {
+    processItem(item);
+  }
+}
+function helper() {}
+function processItem(item) {
+  return item;
+}
+`,
+      ],
+    ]);
+
+    expect(hasEdge(graph, "flow.js::main", "flow.js::helper", "calls")).toBe(true);
+    expect(hasEdge(graph, "flow.js::main", "flow.js::processItem", "calls")).toBe(true);
   });
 });
 
@@ -159,6 +204,52 @@ describe("typescript", () => {
     const render = graph.nodes.find((n) => n.id === "w.ts::render");
     expect(render?.parent).toBe("class::w.ts::Widget");
   });
+
+  test("distingue metodos de funciones libres", async () => {
+    const graph = await run(typescriptAnalyzer, [
+      [
+        "widget.ts",
+        `function formatLabel(): string {
+  return "ready";
+}
+
+class Widget {
+  render(): void {
+    formatLabel();
+  }
+}
+`,
+      ],
+    ]);
+
+    const render = graph.nodes.find((n) => n.id === "widget.ts::render");
+    const formatLabel = graph.nodes.find((n) => n.id === "widget.ts::formatLabel");
+
+    expect(render?.parent).toBe("class::widget.ts::Widget");
+    expect(formatLabel?.parent).toBe("mod::widget.ts");
+    expect(hasEdge(graph, "widget.ts::render", "widget.ts::formatLabel", "calls")).toBe(true);
+  });
+});
+
+describe("archivos sin funciones", () => {
+  test.each([
+    [pythonAnalyzer, "empty.py", ""],
+    [pythonAnalyzer, "values.py", "answer = 42\n"],
+    [javascriptAnalyzer, "empty.js", ""],
+    [javascriptAnalyzer, "values.js", "const answer = 42;\n"],
+    [typescriptAnalyzer, "empty.ts", ""],
+    [typescriptAnalyzer, "values.ts", "const answer: number = 42;\n"],
+    [goAnalyzer, "empty.go", "package main\n"],
+    [goAnalyzer, "values.go", "package main\n\nvar answer = 42\n"],
+  ] satisfies [LanguageAnalyzer, string, string][])(
+    "devuelve grafo vacio para %s",
+    async (analyzer, path, content) => {
+      const graph = await run(analyzer, [[path, content]]);
+
+      expect(graph.nodes).toEqual([]);
+      expect(graph.edges).toEqual([]);
+    },
+  );
 });
 
 describe("go", () => {
