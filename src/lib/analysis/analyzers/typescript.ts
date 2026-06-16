@@ -2,9 +2,10 @@ import type { LanguageAnalyzer } from "../types";
 import { analyzeProjectWith } from "./shared";
 import { makeJsLikeSpec } from "./jslike";
 
-const spec = makeJsLikeSpec("javascript", "tree-sitter-javascript.wasm");
+// Uses the dedicated TypeScript grammar so type annotations parse cleanly.
+const spec = makeJsLikeSpec("typescript", "tree-sitter-typescript.wasm");
 
-export const javascriptAnalyzer: LanguageAnalyzer = {
+export const typescriptAnalyzer: LanguageAnalyzer = {
   language: spec.language,
   analyzeProject: (files) => analyzeProjectWith(spec, files),
 };

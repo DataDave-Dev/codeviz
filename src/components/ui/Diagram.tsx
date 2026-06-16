@@ -1,58 +1,243 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import ReactFlow, {
   Background,
   Controls,
+  Handle,
+  Panel,
+  Position,
   MarkerType,
   type Edge,
   type Node,
+  type NodeProps,
 } from "reactflow";
 import dagre from "@dagrejs/dagre";
 import "reactflow/dist/style.css";
-import type { Graph } from "@/lib/analysis/types";
+import type { Graph, GraphNode } from "@/lib/analysis/types";
 
-const NODE_W = 150;
+const NODE_W = 156;
 const NODE_H = 40;
+const HEADER = 30;
+const PAD = 16;
 
-function toReactFlow(graph: Graph): { nodes: Node[]; edges: Edge[] } {
-  const g = new dagre.graphlib.Graph();
-  g.setGraph({ rankdir: "TB", nodesep: 36, ranksep: 56 });
-  g.setDefaultEdgeLabel(() => ({}));
+const CALL_COLOR = "rgba(255,255,255,0.32)";
+const IMPORT_COLOR = "#5eead4";
+const EXTENDS_COLOR = "#c4b5fd";
 
-  graph.nodes.forEach((n) => g.setNode(n.id, { width: NODE_W, height: NODE_H }));
-  graph.edges.forEach((e) => g.setEdge(e.source, e.target));
-  dagre.layout(g);
+// Container node for a module or class: header label + invisible handles so
+// module/class-level edges (imports, top-level calls, extends) can attach.
+function ContainerNode({ data }: NodeProps<{ label: string; kind: "module" | "class" }>) {
+  const isClass = data.kind === "class";
+  return (
+    <div
+      className={`w-full h-full rounded-xl border ${
+        isClass ? "border-violet-300/30 bg-violet-300/[0.04]" : "border-white/15 bg-white/[0.025]"
+      }`}
+    >
+      <div
+        className={`px-3 py-1.5 font-mono text-[11px] border-b truncate ${
+          isClass
+            ? "text-violet-200/90 border-violet-300/20"
+            : "text-muted/90 border-white/10"
+        }`}
+      >
+        {isClass ? `class ${data.label}` : data.label}
+      </div>
+      <Handle type="target" position={Position.Top} className="!opacity-0" />
+      <Handle type="source" position={Position.Bottom} className="!opacity-0" />
+    </div>
+  );
+}
 
-  const nodes: Node[] = graph.nodes.map((n) => {
-    const { x, y } = g.node(n.id);
+const nodeTypes = { container: ContainerNode };
+
+const fnStyle = {
+  width: NODE_W,
+  borderRadius: 10,
+  border: "1px solid rgba(255,255,255,0.22)",
+  background: "#13151b",
+  color: "#e6e9ef",
+  fontFamily: "ui-monospace, monospace",
+  fontSize: 13,
+} as const;
+
+const isContainer = (n: GraphNode) => n.type === "module" || n.type === "class";
+
+type Layout = { nodes: Node[]; edges: Edge[] };
+
+function layout(graph: Graph): Layout {
+  const byId = new Map(graph.nodes.map((n) => [n.id, n]));
+  const childrenOf = new Map<string, GraphNode[]>();
+  const roots: GraphNode[] = [];
+  for (const n of graph.nodes) {
+    if (n.parent) {
+      const list = childrenOf.get(n.parent) ?? [];
+      list.push(n);
+      childrenOf.set(n.parent, list);
+    } else {
+      roots.push(n);
+    }
+  }
+
+  const sizeById = new Map<string, { w: number; h: number }>();
+  const relById = new Map<string, { x: number; y: number }>();
+
+  // Direct child of `container` that is, or contains, `nodeId`.
+  function ancestorIn(nodeId: string, container: string): string | null {
+    let cur: string | undefined = nodeId;
+    while (cur) {
+      const n = byId.get(cur);
+      if (!n) return null;
+      if (n.parent === container) return cur;
+      cur = n.parent;
+    }
+    return null;
+  }
+
+  // Lay out a container's direct children (recursively) and return its size.
+  function sizeOf(id: string): { w: number; h: number } {
+    const node = byId.get(id)!;
+    if (!isContainer(node)) return { w: NODE_W, h: NODE_H };
+    const kids = childrenOf.get(id) ?? [];
+    if (kids.length === 0) return { w: 200, h: HEADER + 14 };
+
+    const g = new dagre.graphlib.Graph();
+    g.setGraph({ rankdir: "TB", nodesep: 24, ranksep: 40 });
+    g.setDefaultEdgeLabel(() => ({}));
+    for (const k of kids) {
+      const s = sizeOf(k.id);
+      sizeById.set(k.id, s);
+      g.setNode(k.id, { width: s.w, height: s.h });
+    }
+    const seen = new Set<string>();
+    for (const e of graph.edges) {
+      if (e.kind === "imports") continue;
+      const a = ancestorIn(e.source, id);
+      const b = ancestorIn(e.target, id);
+      if (a && b && a !== b && !seen.has(`${a}|${b}`)) {
+        seen.add(`${a}|${b}`);
+        g.setEdge(a, b);
+      }
+    }
+    dagre.layout(g);
+
+    let maxX = 0;
+    let maxY = 0;
+    for (const k of kids) {
+      const s = sizeById.get(k.id)!;
+      const { x, y } = g.node(k.id);
+      const rx = x - s.w / 2 + PAD;
+      const ry = y - s.h / 2 + HEADER + PAD;
+      relById.set(k.id, { x: rx, y: ry });
+      maxX = Math.max(maxX, rx + s.w);
+      maxY = Math.max(maxY, ry + s.h);
+    }
+    return { w: maxX + PAD, h: maxY + PAD };
+  }
+
+  for (const m of roots) sizeById.set(m.id, sizeOf(m.id));
+
+  // Top-level layout of modules (imports + cross-module calls/extends).
+  const topAncestor = (nodeId: string): string | null => {
+    let cur: string | undefined = nodeId;
+    while (cur) {
+      const n = byId.get(cur);
+      if (!n) return null;
+      if (!n.parent) return cur;
+      cur = n.parent;
+    }
+    return null;
+  };
+
+  const gg = new dagre.graphlib.Graph();
+  gg.setGraph({ rankdir: "LR", nodesep: 60, ranksep: 120 });
+  gg.setDefaultEdgeLabel(() => ({}));
+  for (const m of roots) {
+    const s = sizeById.get(m.id)!;
+    gg.setNode(m.id, { width: s.w, height: s.h });
+  }
+  const topSeen = new Set<string>();
+  for (const e of graph.edges) {
+    const a = topAncestor(e.source);
+    const b = topAncestor(e.target);
+    if (a && b && a !== b && !topSeen.has(`${a}|${b}`)) {
+      topSeen.add(`${a}|${b}`);
+      gg.setEdge(a, b);
+    }
+  }
+  dagre.layout(gg);
+
+  const depthOf = (n: GraphNode): number => {
+    let d = 0;
+    let cur = n.parent;
+    while (cur) {
+      d++;
+      cur = byId.get(cur)?.parent;
+    }
+    return d;
+  };
+
+  // Parents must precede children in the array.
+  const ordered = [...graph.nodes].sort((a, b) => depthOf(a) - depthOf(b));
+
+  const nodes: Node[] = ordered.map((n) => {
+    const size = sizeById.get(n.id) ?? { w: NODE_W, h: NODE_H };
+    const position = n.parent
+      ? (relById.get(n.id) ?? { x: 0, y: 0 })
+      : (() => {
+          const { x, y } = gg.node(n.id);
+          return { x: x - size.w / 2, y: y - size.h / 2 };
+        })();
+
+    if (isContainer(n)) {
+      return {
+        id: n.id,
+        type: "container",
+        data: { label: n.label, kind: n.type },
+        position,
+        style: { width: size.w, height: size.h },
+        parentNode: n.parent,
+        extent: n.parent ? ("parent" as const) : undefined,
+        selectable: false,
+        draggable: false,
+      };
+    }
     return {
       id: n.id,
       data: { label: n.label },
-      position: { x: x - NODE_W / 2, y: y - NODE_H / 2 },
-      style: {
-        width: NODE_W,
-        borderRadius: 10,
-        border: "1px solid rgba(255,255,255,0.25)",
-        background: "#13151b",
-        color: "#e6e9ef",
-        fontFamily: "ui-monospace, monospace",
-        fontSize: 13,
-      },
+      position,
+      parentNode: n.parent,
+      extent: n.parent ? ("parent" as const) : undefined,
+      draggable: false,
+      style: fnStyle,
     };
   });
+
+  const edgeColor = (kind: string) =>
+    kind === "imports" ? IMPORT_COLOR : kind === "extends" ? EXTENDS_COLOR : CALL_COLOR;
 
   const edges: Edge[] = graph.edges.map((e, i) => ({
     id: `e${i}`,
     source: e.source,
     target: e.target,
-    animated: true,
-    markerEnd: { type: MarkerType.ArrowClosed, color: "#9aa3b2" },
-    style: { stroke: "rgba(255,255,255,0.35)" },
+    data: { kind: e.kind },
+    animated: e.kind === "calls",
+    markerEnd: { type: MarkerType.ArrowClosed, color: edgeColor(e.kind) },
+    style: {
+      stroke: edgeColor(e.kind),
+      strokeDasharray: e.kind === "calls" ? undefined : "5 4",
+    },
   }));
 
   return { nodes, edges };
 }
+
+const LEGEND: { color: string; label: string; dashed: boolean }[] = [
+  { color: CALL_COLOR, label: "calls", dashed: false },
+  { color: IMPORT_COLOR, label: "imports", dashed: true },
+  { color: EXTENDS_COLOR, label: "extends", dashed: true },
+];
 
 export default function Diagram({
   graph,
@@ -61,7 +246,21 @@ export default function Diagram({
   graph: Graph;
   emptyLabel: string;
 }) {
-  const { nodes, edges } = useMemo(() => toReactFlow(graph), [graph]);
+  const { nodes, edges } = useMemo(() => layout(graph), [graph]);
+  const [hidden, setHidden] = useState<Set<string>>(new Set());
+
+  const shownEdges = useMemo(
+    () => edges.filter((e) => !hidden.has((e.data as { kind: string }).kind)),
+    [edges, hidden],
+  );
+
+  const toggle = (kind: string) =>
+    setHidden((prev) => {
+      const next = new Set(prev);
+      if (next.has(kind)) next.delete(kind);
+      else next.add(kind);
+      return next;
+    });
 
   if (graph.nodes.length === 0) {
     return (
@@ -72,9 +271,40 @@ export default function Diagram({
   }
 
   return (
-    <ReactFlow nodes={nodes} edges={edges} fitView minZoom={0.2}>
+    <ReactFlow
+      nodes={nodes}
+      edges={shownEdges}
+      nodeTypes={nodeTypes}
+      fitView
+      minZoom={0.1}
+      proOptions={{ hideAttribution: true }}
+    >
       <Background color="rgba(255,255,255,0.06)" gap={20} />
       <Controls showInteractive={false} />
+      <Panel
+        position="top-left"
+        className="flex gap-2 rounded-lg border border-white/10 bg-black/70 px-2 py-1.5 text-[11px] backdrop-blur"
+      >
+        {LEGEND.map((l) => {
+          const off = hidden.has(l.label);
+          return (
+            <button
+              key={l.label}
+              onClick={() => toggle(l.label)}
+              aria-pressed={!off}
+              className={`flex items-center gap-1.5 rounded-md px-2 py-1 transition-colors hover:bg-white/5 ${
+                off ? "opacity-35 line-through" : "text-muted"
+              }`}
+            >
+              <span
+                className={`inline-block w-4 border-t ${l.dashed ? "border-dashed" : ""}`}
+                style={{ borderColor: l.color }}
+              />
+              {l.label}
+            </button>
+          );
+        })}
+      </Panel>
     </ReactFlow>
   );
 }

@@ -1,8 +1,15 @@
 import type { LanguageAnalyzer } from "./types";
 import { pythonAnalyzer } from "./analyzers/python";
 import { javascriptAnalyzer } from "./analyzers/javascript";
+import { typescriptAnalyzer } from "./analyzers/typescript";
+import { goAnalyzer } from "./analyzers/go";
 
-const analyzers: LanguageAnalyzer[] = [pythonAnalyzer, javascriptAnalyzer];
+const analyzers: LanguageAnalyzer[] = [
+  pythonAnalyzer,
+  javascriptAnalyzer,
+  typescriptAnalyzer,
+  goAnalyzer,
+];
 
 const registry = new Map(analyzers.map((a) => [a.language, a]));
 
