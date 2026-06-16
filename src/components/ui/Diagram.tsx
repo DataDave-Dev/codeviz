@@ -23,14 +23,26 @@ const PAD = 16;
 
 const CALL_COLOR = "rgba(255,255,255,0.32)";
 const IMPORT_COLOR = "#5eead4";
+const EXTENDS_COLOR = "#c4b5fd";
 
-// Custom container node for a module/file: a header label + invisible handles
-// so module-level edges (imports, top-level calls) can attach.
-function ModuleNode({ data }: NodeProps<{ label: string }>) {
+// Container node for a module or class: header label + invisible handles so
+// module/class-level edges (imports, top-level calls, extends) can attach.
+function ContainerNode({ data }: NodeProps<{ label: string; kind: "module" | "class" }>) {
+  const isClass = data.kind === "class";
   return (
-    <div className="w-full h-full rounded-xl border border-white/15 bg-white/[0.025]">
-      <div className="px-3 py-1.5 font-mono text-[11px] text-muted/90 border-b border-white/10 truncate">
-        {data.label}
+    <div
+      className={`w-full h-full rounded-xl border ${
+        isClass ? "border-violet-300/30 bg-violet-300/[0.04]" : "border-white/15 bg-white/[0.025]"
+      }`}
+    >
+      <div
+        className={`px-3 py-1.5 font-mono text-[11px] border-b truncate ${
+          isClass
+            ? "text-violet-200/90 border-violet-300/20"
+            : "text-muted/90 border-white/10"
+        }`}
+      >
+        {isClass ? `class ${data.label}` : data.label}
       </div>
       <Handle type="target" position={Position.Top} className="!opacity-0" />
       <Handle type="source" position={Position.Bottom} className="!opacity-0" />
@@ -38,7 +50,7 @@ function ModuleNode({ data }: NodeProps<{ label: string }>) {
   );
 }
 
-const nodeTypes = { module: ModuleNode };
+const nodeTypes = { container: ContainerNode };
 
 const fnStyle = {
   width: NODE_W,
@@ -50,136 +62,181 @@ const fnStyle = {
   fontSize: 13,
 } as const;
 
+const isContainer = (n: GraphNode) => n.type === "module" || n.type === "class";
+
 type Layout = { nodes: Node[]; edges: Edge[] };
 
 function layout(graph: Graph): Layout {
-  const modules = graph.nodes.filter((n) => n.type === "module");
-  const functions = graph.nodes.filter((n) => n.type === "function");
-
-  const fnByModule = new Map<string, GraphNode[]>();
-  for (const f of functions) {
-    if (!f.parent) continue;
-    const list = fnByModule.get(f.parent) ?? [];
-    list.push(f);
-    fnByModule.set(f.parent, list);
+  const byId = new Map(graph.nodes.map((n) => [n.id, n]));
+  const childrenOf = new Map<string, GraphNode[]>();
+  const roots: GraphNode[] = [];
+  for (const n of graph.nodes) {
+    if (n.parent) {
+      const list = childrenOf.get(n.parent) ?? [];
+      list.push(n);
+      childrenOf.set(n.parent, list);
+    } else {
+      roots.push(n);
+    }
   }
 
-  // Intra-module call edges drive each module's internal layout.
-  const sameModuleEdges = graph.edges.filter(
-    (e) =>
-      e.kind === "calls" &&
-      functions.some((f) => f.id === e.source) &&
-      functions.some((f) => f.id === e.target) &&
-      functions.find((f) => f.id === e.source)?.parent ===
-        functions.find((f) => f.id === e.target)?.parent,
-  );
+  const sizeById = new Map<string, { w: number; h: number }>();
+  const relById = new Map<string, { x: number; y: number }>();
 
-  // 1. Sub-layout each module's functions; record relative child positions + size.
-  const childRel = new Map<string, { x: number; y: number }>();
-  const moduleSize = new Map<string, { w: number; h: number }>();
-
-  for (const mod of modules) {
-    const funcs = fnByModule.get(mod.id) ?? [];
-    if (funcs.length === 0) {
-      moduleSize.set(mod.id, { w: 200, h: HEADER + 14 });
-      continue;
+  // Direct child of `container` that is, or contains, `nodeId`.
+  function ancestorIn(nodeId: string, container: string): string | null {
+    let cur: string | undefined = nodeId;
+    while (cur) {
+      const n = byId.get(cur);
+      if (!n) return null;
+      if (n.parent === container) return cur;
+      cur = n.parent;
     }
+    return null;
+  }
+
+  // Lay out a container's direct children (recursively) and return its size.
+  function sizeOf(id: string): { w: number; h: number } {
+    const node = byId.get(id)!;
+    if (!isContainer(node)) return { w: NODE_W, h: NODE_H };
+    const kids = childrenOf.get(id) ?? [];
+    if (kids.length === 0) return { w: 200, h: HEADER + 14 };
+
     const g = new dagre.graphlib.Graph();
     g.setGraph({ rankdir: "TB", nodesep: 24, ranksep: 40 });
     g.setDefaultEdgeLabel(() => ({}));
-    funcs.forEach((f) => g.setNode(f.id, { width: NODE_W, height: NODE_H }));
-    sameModuleEdges
-      .filter((e) => funcs.some((f) => f.id === e.source))
-      .forEach((e) => g.setEdge(e.source, e.target));
+    for (const k of kids) {
+      const s = sizeOf(k.id);
+      sizeById.set(k.id, s);
+      g.setNode(k.id, { width: s.w, height: s.h });
+    }
+    const seen = new Set<string>();
+    for (const e of graph.edges) {
+      if (e.kind === "imports") continue;
+      const a = ancestorIn(e.source, id);
+      const b = ancestorIn(e.target, id);
+      if (a && b && a !== b && !seen.has(`${a}|${b}`)) {
+        seen.add(`${a}|${b}`);
+        g.setEdge(a, b);
+      }
+    }
     dagre.layout(g);
 
     let maxX = 0;
     let maxY = 0;
-    for (const f of funcs) {
-      const { x, y } = g.node(f.id);
-      const rx = x - NODE_W / 2 + PAD;
-      const ry = y - NODE_H / 2 + HEADER + PAD;
-      childRel.set(f.id, { x: rx, y: ry });
-      maxX = Math.max(maxX, rx + NODE_W);
-      maxY = Math.max(maxY, ry + NODE_H);
+    for (const k of kids) {
+      const s = sizeById.get(k.id)!;
+      const { x, y } = g.node(k.id);
+      const rx = x - s.w / 2 + PAD;
+      const ry = y - s.h / 2 + HEADER + PAD;
+      relById.set(k.id, { x: rx, y: ry });
+      maxX = Math.max(maxX, rx + s.w);
+      maxY = Math.max(maxY, ry + s.h);
     }
-    moduleSize.set(mod.id, { w: maxX + PAD, h: maxY + PAD });
+    return { w: maxX + PAD, h: maxY + PAD };
   }
 
-  // 2. Top-level layout of modules using imports + cross-module calls.
-  const moduleOf = new Map<string, string>(); // fnId -> moduleId
-  for (const f of functions) if (f.parent) moduleOf.set(f.id, f.parent);
-  const moduleIds = new Set(modules.map((m) => m.id));
+  for (const m of roots) sizeById.set(m.id, sizeOf(m.id));
 
-  const topEdges = new Set<string>();
-  for (const e of graph.edges) {
-    const src = moduleIds.has(e.source) ? e.source : moduleOf.get(e.source);
-    const tgt = moduleIds.has(e.target) ? e.target : moduleOf.get(e.target);
-    if (src && tgt && src !== tgt) topEdges.add(`${src}|${tgt}`);
-  }
+  // Top-level layout of modules (imports + cross-module calls/extends).
+  const topAncestor = (nodeId: string): string | null => {
+    let cur: string | undefined = nodeId;
+    while (cur) {
+      const n = byId.get(cur);
+      if (!n) return null;
+      if (!n.parent) return cur;
+      cur = n.parent;
+    }
+    return null;
+  };
 
   const gg = new dagre.graphlib.Graph();
   gg.setGraph({ rankdir: "LR", nodesep: 60, ranksep: 120 });
   gg.setDefaultEdgeLabel(() => ({}));
-  for (const mod of modules) {
-    const size = moduleSize.get(mod.id)!;
-    gg.setNode(mod.id, { width: size.w, height: size.h });
+  for (const m of roots) {
+    const s = sizeById.get(m.id)!;
+    gg.setNode(m.id, { width: s.w, height: s.h });
   }
-  for (const key of topEdges) {
-    const [s, t] = key.split("|");
-    gg.setEdge(s, t);
+  const topSeen = new Set<string>();
+  for (const e of graph.edges) {
+    const a = topAncestor(e.source);
+    const b = topAncestor(e.target);
+    if (a && b && a !== b && !topSeen.has(`${a}|${b}`)) {
+      topSeen.add(`${a}|${b}`);
+      gg.setEdge(a, b);
+    }
   }
   dagre.layout(gg);
 
-  // 3. Compose React Flow nodes — modules (parents) first, then functions.
-  const nodes: Node[] = [];
-  for (const mod of modules) {
-    const size = moduleSize.get(mod.id)!;
-    const { x, y } = gg.node(mod.id);
-    nodes.push({
-      id: mod.id,
-      type: "module",
-      data: { label: mod.label },
-      position: { x: x - size.w / 2, y: y - size.h / 2 },
-      style: { width: size.w, height: size.h },
-      selectable: false,
-      draggable: false,
-    });
-  }
-  for (const f of functions) {
-    const rel = childRel.get(f.id);
-    if (!rel || !f.parent) continue;
-    nodes.push({
-      id: f.id,
-      data: { label: f.label },
-      position: rel,
-      parentNode: f.parent,
-      extent: "parent",
+  const depthOf = (n: GraphNode): number => {
+    let d = 0;
+    let cur = n.parent;
+    while (cur) {
+      d++;
+      cur = byId.get(cur)?.parent;
+    }
+    return d;
+  };
+
+  // Parents must precede children in the array.
+  const ordered = [...graph.nodes].sort((a, b) => depthOf(a) - depthOf(b));
+
+  const nodes: Node[] = ordered.map((n) => {
+    const size = sizeById.get(n.id) ?? { w: NODE_W, h: NODE_H };
+    const position = n.parent
+      ? (relById.get(n.id) ?? { x: 0, y: 0 })
+      : (() => {
+          const { x, y } = gg.node(n.id);
+          return { x: x - size.w / 2, y: y - size.h / 2 };
+        })();
+
+    if (isContainer(n)) {
+      return {
+        id: n.id,
+        type: "container",
+        data: { label: n.label, kind: n.type },
+        position,
+        style: { width: size.w, height: size.h },
+        parentNode: n.parent,
+        extent: n.parent ? ("parent" as const) : undefined,
+        selectable: false,
+        draggable: false,
+      };
+    }
+    return {
+      id: n.id,
+      data: { label: n.label },
+      position,
+      parentNode: n.parent,
+      extent: n.parent ? ("parent" as const) : undefined,
       draggable: false,
       style: fnStyle,
-    });
-  }
-
-  const edges: Edge[] = graph.edges.map((e, i) => {
-    const isImport = e.kind === "imports";
-    return {
-      id: `e${i}`,
-      source: e.source,
-      target: e.target,
-      animated: !isImport,
-      markerEnd: {
-        type: MarkerType.ArrowClosed,
-        color: isImport ? IMPORT_COLOR : "#9aa3b2",
-      },
-      style: {
-        stroke: isImport ? IMPORT_COLOR : CALL_COLOR,
-        strokeDasharray: isImport ? "5 4" : undefined,
-      },
     };
   });
 
+  const edgeColor = (kind: string) =>
+    kind === "imports" ? IMPORT_COLOR : kind === "extends" ? EXTENDS_COLOR : CALL_COLOR;
+
+  const edges: Edge[] = graph.edges.map((e, i) => ({
+    id: `e${i}`,
+    source: e.source,
+    target: e.target,
+    animated: e.kind === "calls",
+    markerEnd: { type: MarkerType.ArrowClosed, color: edgeColor(e.kind) },
+    style: {
+      stroke: edgeColor(e.kind),
+      strokeDasharray: e.kind === "calls" ? undefined : "5 4",
+    },
+  }));
+
   return { nodes, edges };
 }
+
+const LEGEND: { color: string; label: string; dashed: boolean }[] = [
+  { color: CALL_COLOR, label: "calls", dashed: false },
+  { color: IMPORT_COLOR, label: "imports", dashed: true },
+  { color: EXTENDS_COLOR, label: "extends", dashed: true },
+];
 
 export default function Diagram({
   graph,
@@ -213,17 +270,15 @@ export default function Diagram({
         position="top-left"
         className="flex gap-4 rounded-lg border border-white/10 bg-black/70 px-3 py-2 text-[11px] text-muted backdrop-blur"
       >
-        <span className="flex items-center gap-1.5">
-          <span className="inline-block w-4 border-t" style={{ borderColor: CALL_COLOR }} />
-          calls
-        </span>
-        <span className="flex items-center gap-1.5">
-          <span
-            className="inline-block w-4 border-t border-dashed"
-            style={{ borderColor: IMPORT_COLOR }}
-          />
-          imports
-        </span>
+        {LEGEND.map((l) => (
+          <span key={l.label} className="flex items-center gap-1.5">
+            <span
+              className={`inline-block w-4 border-t ${l.dashed ? "border-dashed" : ""}`}
+              style={{ borderColor: l.color }}
+            />
+            {l.label}
+          </span>
+        ))}
       </Panel>
     </ReactFlow>
   );

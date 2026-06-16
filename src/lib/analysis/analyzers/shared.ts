@@ -11,13 +11,20 @@ export type LangSpec = {
   callQuery: string;
   /** Captures the raw module specifier of each import (e.g. `./utils`, `pkg.mod`). */
   importQuery: string;
+  /** Captures class definitions (e.g. `(class_definition) @class`). */
+  classQuery: string;
   funcDefTypes: ReadonlySet<string>;
+  /** Node types that introduce a class scope (to attribute methods to a class). */
+  classNodeTypes: ReadonlySet<string>;
+  /** Base-class names a class declaration extends. */
+  classBases: (node: Node) => string[];
   /** Map an import specifier (from `fromFile`) to a file path in the project, or null. */
   resolveModule: (fromFile: string, specifier: string, paths: Set<string>) => string | null;
 };
 
 const moduleId = (file: string) => `mod::${file}`;
 const funcId = (file: string, name: string) => `${file}::${name}`;
+const classId = (file: string, name: string) => `class::${file}::${name}`;
 
 function resolveName(node: Node): string | null {
   const direct = node.childForFieldName("name");
@@ -47,6 +54,22 @@ function enclosingFunctionName(
   return null;
 }
 
+/** Nearest enclosing class name, or null when the node is not inside a class. */
+function enclosingClassName(
+  node: Node,
+  classNodeTypes: ReadonlySet<string>,
+): string | null {
+  let current: Node | null = node.parent;
+  while (current) {
+    if (classNodeTypes.has(current.type)) {
+      const name = resolveName(current);
+      if (name) return name;
+    }
+    current = current.parent;
+  }
+  return null;
+}
+
 function stripQuotes(text: string): string {
   return text.replace(/^['"`]|['"`]$/g, "");
 }
@@ -54,8 +77,11 @@ function stripQuotes(text: string): string {
 type FileFacts = {
   file: string;
   defs: Set<string>;
+  methodClass: Map<string, string>; // function name -> owning class name
+  classes: Set<string>;
+  extendsRel: { cls: string; base: string }[];
   calls: { caller: string | null; callee: string }[];
-  imports: Set<string>; // resolved target file paths
+  imports: Set<string>;
 };
 
 async function parseFile(
@@ -68,10 +94,24 @@ async function parseFile(
   const root = tree.rootNode;
 
   const defs = new Set<string>();
+  const methodClass = new Map<string, string>();
   const defQuery = language.query(spec.funcDefQuery);
   for (const { node } of defQuery.captures(root)) {
     const name = resolveName(node);
-    if (name) defs.add(name);
+    if (!name) continue;
+    defs.add(name);
+    const cls = enclosingClassName(node, spec.classNodeTypes);
+    if (cls) methodClass.set(name, cls);
+  }
+
+  const classes = new Set<string>();
+  const extendsRel: { cls: string; base: string }[] = [];
+  const classQuery = language.query(spec.classQuery);
+  for (const { node } of classQuery.captures(root)) {
+    const name = resolveName(node);
+    if (!name) continue;
+    classes.add(name);
+    for (const base of spec.classBases(node)) extendsRel.push({ cls: name, base });
   }
 
   const calls: { caller: string | null; callee: string }[] = [];
@@ -91,7 +131,23 @@ async function parseFile(
   }
 
   tree.delete();
-  return { file: source.path, defs, calls, imports };
+  return { file: source.path, defs, methodClass, classes, extendsRel, calls, imports };
+}
+
+/** Pick the defining file for a name, preferring local, then imported, then unique. */
+function resolveOwner(
+  name: string,
+  fromFile: string,
+  imports: Set<string>,
+  index: Map<string, string[]>,
+): string | undefined {
+  const candidates = index.get(name);
+  if (!candidates || candidates.length === 0) return undefined;
+  if (candidates.includes(fromFile)) return fromFile;
+  const imported = candidates.filter((c) => imports.has(c));
+  if (imported.length > 0) return imported[0];
+  if (candidates.length === 1) return candidates[0];
+  return undefined; // ambiguous
 }
 
 export async function analyzeProjectWith(
@@ -101,13 +157,19 @@ export async function analyzeProjectWith(
   const paths = new Set(files.map((f) => f.path));
   const facts = await Promise.all(files.map((f) => parseFile(spec, f, paths)));
 
-  // Global symbol table: which files define each function name.
+  // Global symbol tables.
   const defToFiles = new Map<string, string[]>();
+  const classToFiles = new Map<string, string[]>();
   for (const f of facts) {
     for (const name of f.defs) {
       const list = defToFiles.get(name) ?? [];
       list.push(f.file);
       defToFiles.set(name, list);
+    }
+    for (const name of f.classes) {
+      const list = classToFiles.get(name) ?? [];
+      list.push(f.file);
+      classToFiles.set(name, list);
     }
   }
 
@@ -134,19 +196,8 @@ export async function analyzeProjectWith(
   // Call edges, resolved across files using imports to disambiguate.
   for (const f of facts) {
     for (const { caller, callee } of f.calls) {
-      const candidates = defToFiles.get(callee);
-      if (!candidates || candidates.length === 0) continue;
-
-      let targetFile: string | undefined;
-      if (candidates.includes(f.file)) {
-        targetFile = f.file; // local definition wins
-      } else {
-        const imported = candidates.filter((c) => f.imports.has(c));
-        if (imported.length > 0) targetFile = imported[0];
-        else if (candidates.length === 1) targetFile = candidates[0];
-      }
-      if (!targetFile) continue; // ambiguous: skip rather than guess
-
+      const targetFile = resolveOwner(callee, f.file, f.imports, defToFiles);
+      if (!targetFile) continue;
       const source = caller ? funcId(f.file, caller) : moduleId(f.file);
       addEdge(source, funcId(targetFile, callee), "calls");
       usedModules.add(f.file);
@@ -154,24 +205,46 @@ export async function analyzeProjectWith(
     }
   }
 
-  // Nodes: a module per file that has functions or participates in edges,
-  // plus a function node per defined function.
+  // Inheritance edges (class -> base class).
   for (const f of facts) {
-    if (f.defs.size > 0) usedModules.add(f.file);
+    for (const { cls, base } of f.extendsRel) {
+      const targetFile = resolveOwner(base, f.file, f.imports, classToFiles);
+      if (!targetFile) continue;
+      addEdge(classId(f.file, cls), classId(targetFile, base), "extends");
+      usedModules.add(f.file);
+      usedModules.add(targetFile);
+    }
   }
 
+  for (const f of facts) {
+    if (f.defs.size > 0 || f.classes.size > 0) usedModules.add(f.file);
+  }
+
+  // Nodes: modules, then classes (parent = module), then functions/methods.
   const nodes: GraphNode[] = [];
   for (const file of usedModules) {
     nodes.push({ id: moduleId(file), label: file, type: "module", file });
   }
   for (const f of facts) {
+    for (const name of f.classes) {
+      nodes.push({
+        id: classId(f.file, name),
+        label: name,
+        type: "class",
+        file: f.file,
+        parent: moduleId(f.file),
+      });
+    }
+  }
+  for (const f of facts) {
     for (const name of f.defs) {
+      const owningClass = f.methodClass.get(name);
       nodes.push({
         id: funcId(f.file, name),
         label: name,
         type: "function",
         file: f.file,
-        parent: moduleId(f.file),
+        parent: owningClass ? classId(f.file, owningClass) : moduleId(f.file),
       });
     }
   }

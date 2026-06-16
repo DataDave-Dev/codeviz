@@ -1,6 +1,23 @@
 import path from "node:path";
+import type Parser from "web-tree-sitter";
 import type { LanguageAnalyzer } from "../types";
 import { analyzeProjectWith, type LangSpec } from "./shared";
+
+// Base classes from `class Foo(Bar, mod.Baz):` — bare names and the trailing
+// identifier of dotted bases; keyword args (metaclass=...) are skipped.
+function classBases(node: Parser.SyntaxNode): string[] {
+  const supers = node.childForFieldName("superclasses");
+  if (!supers) return [];
+  const bases: string[] = [];
+  for (const child of supers.namedChildren) {
+    if (child.type === "identifier") bases.push(child.text);
+    else if (child.type === "attribute") {
+      const attr = child.childForFieldName("attribute");
+      if (attr) bases.push(attr.text);
+    }
+  }
+  return bases;
+}
 
 // `from pkg.mod import x`, `from .mod import x`, `import pkg.mod`, `import pkg.mod as m`.
 function resolveModule(
@@ -47,7 +64,10 @@ const spec: LangSpec = {
     (import_statement name: (dotted_name) @mod)
     (import_statement name: (aliased_import name: (dotted_name) @mod))
   `,
+  classQuery: "(class_definition) @class",
   funcDefTypes: new Set(["function_definition"]),
+  classNodeTypes: new Set(["class_definition"]),
+  classBases,
   resolveModule,
 };
 

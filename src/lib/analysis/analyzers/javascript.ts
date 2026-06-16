@@ -1,8 +1,23 @@
 import path from "node:path";
+import type Parser from "web-tree-sitter";
 import type { LanguageAnalyzer } from "../types";
 import { analyzeProjectWith, type LangSpec } from "./shared";
 
 const EXTS = [".js", ".jsx", ".mjs", ".cjs", ".ts", ".tsx"];
+
+// Single base from `class A extends B {}` (or `extends ns.B`).
+function classBases(node: Parser.SyntaxNode): string[] {
+  const heritage = node.namedChildren.find((c) => c.type === "class_heritage");
+  if (!heritage) return [];
+  for (const child of heritage.namedChildren) {
+    if (child.type === "identifier") return [child.text];
+    if (child.type === "member_expression") {
+      const prop = child.childForFieldName("property");
+      if (prop) return [prop.text];
+    }
+  }
+  return [];
+}
 
 // Resolve relative ES imports (`./x`, `../lib/x`). Bare specifiers = node_modules, skipped.
 function resolveModule(
@@ -47,6 +62,7 @@ const spec: LangSpec = {
     (import_statement source: (string) @mod)
     (export_statement source: (string) @mod)
   `,
+  classQuery: "[(class_declaration) (class)] @class",
   funcDefTypes: new Set([
     "function_declaration",
     "generator_function_declaration",
@@ -54,6 +70,8 @@ const spec: LangSpec = {
     "arrow_function",
     "method_definition",
   ]),
+  classNodeTypes: new Set(["class_declaration", "class"]),
+  classBases,
   resolveModule,
 };
 

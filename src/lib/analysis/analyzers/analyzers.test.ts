@@ -97,3 +97,42 @@ main();
     expect(hasEdge(graph, "main.js::run", "helpers.js::work", "calls")).toBe(true);
   });
 });
+
+describe("clases y herencia", () => {
+  test("python: nodos de clase, herencia y métodos", async () => {
+    const graph = await run(pythonAnalyzer, [
+      [
+        "m.py",
+        `class Animal:
+    def breathe(self):
+        pass
+
+class Dog(Animal):
+    def bark(self):
+        pass
+`,
+      ],
+    ]);
+
+    expect(hasNode(graph, "class::m.py::Animal")).toBe(true);
+    expect(hasNode(graph, "class::m.py::Dog")).toBe(true);
+    expect(hasEdge(graph, "class::m.py::Dog", "class::m.py::Animal", "extends")).toBe(true);
+    // Method is parented to its class node.
+    const breathe = graph.nodes.find((n) => n.id === "m.py::breathe");
+    expect(breathe?.parent).toBe("class::m.py::Animal");
+  });
+
+  test("javascript: herencia entre archivos", async () => {
+    const graph = await run(javascriptAnalyzer, [
+      ["base.js", "export class Base {}\n"],
+      [
+        "widget.js",
+        'import { Base } from "./base";\nclass Widget extends Base {\n  render() {}\n}\n',
+      ],
+    ]);
+
+    expect(hasEdge(graph, "class::widget.js::Widget", "class::base.js::Base", "extends")).toBe(true);
+    const render = graph.nodes.find((n) => n.id === "widget.js::render");
+    expect(render?.parent).toBe("class::widget.js::Widget");
+  });
+});
