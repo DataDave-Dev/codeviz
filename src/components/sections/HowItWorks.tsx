@@ -42,36 +42,44 @@ export default function HowItWorks({
   return (
     <section
       id="how"
-      className="max-w-[1100px] mx-auto px-6 py-28 max-[620px]:py-16"
+      className="relative isolate overflow-hidden border-y border-white/[0.07] bg-[#0c0e14]"
     >
-      <h2 className="text-[clamp(1.9rem,3.2vw,2.75rem)] font-bold tracking-[-0.01em] text-center mb-16">
-        {heading}
-      </h2>
+      {/* Soft glow keeps the band from reading as a flat fill. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute left-1/2 top-0 -z-10 h-72 w-[60%] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(198,206,219,0.10),transparent)] blur-3xl"
+      />
 
-      <ol className="relative grid grid-cols-3 gap-10 max-[760px]:grid-cols-1 max-[760px]:gap-12">
-        <div
-          aria-hidden="true"
-          className="hidden md:block absolute top-7 left-[16.6%] right-[16.6%] border-t border-dashed border-white/15"
-        />
+      <div className="relative mx-auto max-w-[1100px] px-6 py-28 max-[620px]:py-16">
+        <h2 className="text-[clamp(1.9rem,3.2vw,2.75rem)] font-bold tracking-[-0.01em] text-center mb-16">
+          {heading}
+        </h2>
 
-        {steps.map((step, i) => (
-          <li
-            key={step.title}
-            className="js-reveal relative flex flex-col items-center text-center"
-          >
-            <span className="flex items-center justify-center w-14 h-14 rounded-2xl border border-white/15 bg-[#0c0d12] text-[#e6e9ef]">
-              {ICONS[i]}
-            </span>
-            <span className="metallic mt-5 font-mono text-sm">
-              {`0${i + 1}`}
-            </span>
-            <h3 className="mt-2 text-lg font-semibold">{step.title}</h3>
-            <p className="mt-2 max-w-[32ch] text-[15px] leading-[1.65] text-muted">
-              {step.desc}
-            </p>
-          </li>
-        ))}
-      </ol>
+        <ol className="relative grid grid-cols-3 gap-10 max-[760px]:grid-cols-1 max-[760px]:gap-12">
+          <div
+            aria-hidden="true"
+            className="js-draw hidden md:block absolute top-7 left-[16.6%] right-[16.6%] border-t border-dashed border-white/20"
+          />
+
+          {steps.map((step, i) => (
+            <li
+              key={step.title}
+              className="js-reveal group relative flex flex-col items-center text-center"
+            >
+              <span className="flex items-center justify-center w-14 h-14 rounded-2xl border border-white/15 bg-[#0c0d12] text-[#e6e9ef] transition-all duration-300 group-hover:-translate-y-1 group-hover:border-white/40 group-hover:bg-[#14161d] group-hover:shadow-[0_10px_30px_-10px_rgba(0,0,0,0.7)]">
+                {ICONS[i]}
+              </span>
+              <span className="metallic mt-5 font-mono text-sm">
+                {`0${i + 1}`}
+              </span>
+              <h3 className="mt-2 text-lg font-semibold">{step.title}</h3>
+              <p className="mt-2 max-w-[32ch] text-[15px] leading-[1.65] text-muted">
+                {step.desc}
+              </p>
+            </li>
+          ))}
+        </ol>
+      </div>
     </section>
   );
 }
