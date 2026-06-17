@@ -9,6 +9,8 @@ import ReactFlow, {
   Panel,
   Position,
   MarkerType,
+  useNodesState,
+  useEdgesState,
   type Edge,
   type Node,
   type NodeProps,
@@ -274,8 +276,6 @@ function layout(graph: Graph, dark: boolean): Layout {
         style: { width: size.w, height: size.h },
         parentNode: n.parent,
         extent: n.parent ? ("parent" as const) : undefined,
-        selectable: false,
-        draggable: false,
       };
     }
     if (n.type === "table") {
@@ -293,7 +293,6 @@ function layout(graph: Graph, dark: boolean): Layout {
       position,
       parentNode: n.parent,
       extent: n.parent ? ("parent" as const) : undefined,
-      draggable: false,
       style: dark ? fnStyleDark : fnStyle,
     };
   });
@@ -338,6 +337,10 @@ const LEGEND: { color: string; label: string; dashed: boolean }[] = [
   { color: REF_COLOR, label: "references", dashed: true },
 ];
 
+// Opacity applied to nodes/edges not connected to the selected node.
+const DIM_NODE = 0.15;
+const DIM_EDGE = 0.06;
+
 export default function Diagram({
   graph,
   emptyLabel,
@@ -346,8 +349,22 @@ export default function Diagram({
   emptyLabel: string;
 }) {
   const dark = useIsDark();
-  const { nodes, edges } = useMemo(() => layout(graph, dark), [graph, dark]);
+  const initial = useMemo(() => layout(graph, dark), [graph, dark]);
+  const [nodes, setNodes, onNodesChange] = useNodesState(initial.nodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(initial.edges);
   const [hidden, setHidden] = useState<Set<string>>(new Set());
+  const [selected, setSelected] = useState<string | null>(null);
+
+  // Re-seed positions/edges when the graph or theme produces a new layout.
+  // Render-time reset (React's "adjust state when a prop changes" pattern) so
+  // dragged positions are discarded only when the underlying layout changes.
+  const [prevInitial, setPrevInitial] = useState(initial);
+  if (prevInitial !== initial) {
+    setPrevInitial(initial);
+    setNodes(initial.nodes);
+    setEdges(initial.edges);
+    setSelected(null);
+  }
 
   const legend = useMemo(() => {
     const present = new Set(graph.edges.map((e) => e.kind));
@@ -356,10 +373,59 @@ export default function Diagram({
     );
   }, [graph]);
 
-  const shownEdges = useMemo(
-    () => edges.filter((e) => !hidden.has((e.data as { kind: string }).kind)),
-    [edges, hidden],
-  );
+  // Nodes/edges connected to the selected node (plus the selected node's
+  // ancestors, so its containers stay lit). null = nothing selected.
+  const active = useMemo(() => {
+    if (!selected) return null;
+    const parentOf = new Map(nodes.map((n) => [n.id, n.parentNode]));
+    const litNodes = new Set<string>([selected]);
+    const litEdges = new Set<string>();
+    for (const e of edges) {
+      if (e.source === selected || e.target === selected) {
+        litEdges.add(e.id);
+        litNodes.add(e.source);
+        litNodes.add(e.target);
+      }
+    }
+    for (const id of [...litNodes]) {
+      let cur = parentOf.get(id);
+      while (cur) {
+        litNodes.add(cur);
+        cur = parentOf.get(cur);
+      }
+    }
+    return { litNodes, litEdges };
+  }, [selected, nodes, edges]);
+
+  const shownNodes = useMemo(() => {
+    if (!active) return nodes;
+    return nodes.map((n) => ({
+      ...n,
+      style: {
+        ...n.style,
+        opacity: active.litNodes.has(n.id) ? 1 : DIM_NODE,
+      },
+    }));
+  }, [nodes, active]);
+
+  const shownEdges = useMemo(() => {
+    const visible = edges.filter(
+      (e) => !hidden.has((e.data as { kind: string }).kind),
+    );
+    if (!active) return visible;
+    return visible.map((e) => {
+      const lit = active.litEdges.has(e.id);
+      return {
+        ...e,
+        animated: lit && e.animated,
+        style: {
+          ...e.style,
+          opacity: lit ? 1 : DIM_EDGE,
+          strokeWidth: lit ? 2.5 : e.style?.strokeWidth,
+        },
+      };
+    });
+  }, [edges, hidden, active]);
 
   const toggle = (kind: string) =>
     setHidden((prev) => {
@@ -379,8 +445,12 @@ export default function Diagram({
 
   return (
     <ReactFlow
-      nodes={nodes}
+      nodes={shownNodes}
       edges={shownEdges}
+      onNodesChange={onNodesChange}
+      onEdgesChange={onEdgesChange}
+      onNodeClick={(_, n) => setSelected(n.id)}
+      onPaneClick={() => setSelected(null)}
       nodeTypes={nodeTypes}
       fitView
       minZoom={0.1}
