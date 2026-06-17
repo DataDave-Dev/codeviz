@@ -319,11 +319,10 @@ export default function CodeWorkspace({
   const tab = (value: "snippet" | "project", label: string) => (
     <button
       onClick={() => setMode(value)}
-      className={`px-3 py-1 rounded-md text-[12px] font-medium transition-colors ${
-        mode === value
+      className={`px-3 py-1 rounded-md text-[12px] font-medium transition-colors ${mode === value
           ? "bg-[#eef2ff] text-[#0f172a]"
           : "text-[#475569] hover:text-[#0f172a]"
-      }`}
+        }`}
     >
       {label}
     </button>
@@ -474,10 +473,7 @@ export default function CodeWorkspace({
         {/* Canvas chrome */}
         <div className="flex items-center justify-between h-11 px-4 border-b border-[#e2e8f0] bg-[#f8fafc]">
           <div className="flex items-center gap-1.5">
-            <span className="w-3 h-3 rounded-full bg-[#cbd5e1]" />
-            <span className="w-3 h-3 rounded-full bg-[#cbd5e1]" />
-            <span className="w-3 h-3 rounded-full bg-[#cbd5e1]" />
-            <span className="ml-3 font-mono text-[11px] uppercase tracking-wide text-[#64748b]">
+            <span className="font-mono text-[11px] uppercase tracking-wide text-[#64748b]">
               {language === "sql" ? "schema diagram" : "call graph"}
             </span>
           </div>
