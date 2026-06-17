@@ -27,10 +27,10 @@ export default async function RootLayout({
 }) {
   const { lang } = await params;
   if (!isLocale(lang)) notFound();
-  const t = getDictionary(lang);
+  const t = getDictionary(lang as Locale);
 
   return (
-    <html lang={lang as Locale} suppressHydrationWarning>
+    <html lang={lang as Locale} dir={lang === "ar" ? "rtl" : "ltr"} suppressHydrationWarning>
       <head>
         <script
           dangerouslySetInnerHTML={{

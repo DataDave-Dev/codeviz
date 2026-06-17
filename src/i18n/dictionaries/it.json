@@ -1,0 +1,112 @@
+{
+  "title": "Weftmap",
+  "badge": "Open source · Multilingue",
+  "hero": "Comprendi qualsiasi codice a colpo d'occhio.",
+  "tagline": "Incolla il codice e ottieni un grafo delle chiamate interattivo. Multilingue tramite Tree-sitter.",
+  "getStarted": "Inizia ora",
+  "learnMore": "Scopri di più",
+  "supports": "Supporta",
+  "moreLanguagesSoon": "Altri linguaggi in arrivo",
+  "howTitle": "Come funziona",
+  "steps": [
+    {
+      "title": "Incolla il tuo codice",
+      "desc": "Scegli un linguaggio e inserisci uno snippet — nessuna configurazione, nessun caricamento."
+    },
+    {
+      "title": "Tree-sitter lo analizza",
+      "desc": "Un albero sintattico reale viene generato sul server, veloce e indipendente dal linguaggio."
+    },
+    {
+      "title": "Esplora il grafo delle chiamate",
+      "desc": "Spostati, zooma e segui il modo in cui le funzioni si chiamano tra loro."
+    }
+  ],
+  "featuresTitle": "Creato per leggere il codice",
+  "features": [
+    {
+      "title": "Multilingue",
+      "desc": "Un unico motore di analisi, molti linguaggi. Basato su Tree-sitter."
+    },
+    {
+      "title": "Diagrammi interattivi",
+      "desc": "Spostati, zooma ed esplora il grafo delle chiamate del tuo codice."
+    },
+    {
+      "title": "Estensibile",
+      "desc": "Aggiungi un nuovo linguaggio in poche righe di codice. Sviluppato per essere esteso."
+    },
+    {
+      "title": "Analisi accurata",
+      "desc": "Alberi sintattici reali via Tree-sitter, non espressioni regolari fragili."
+    },
+    {
+      "title": "Nessuna configurazione",
+      "desc": "Incolla uno snippet e visualizzalo. Niente da installare."
+    },
+    {
+      "title": "Open source",
+      "desc": "Gratuito, con licenza MIT e guidato dalla community."
+    }
+  ],
+  "license": "Licenza",
+  "contribute": "Contribuisci",
+  "footerProduct": "Prodotto",
+  "footerResources": "Risorse",
+  "footerNote": "Open source, creato per essere esteso.",
+  "documentation": "Documentazione",
+  "previous": "Precedente",
+  "next": "Successivo",
+  "appTitle": "Prova ora",
+  "languageLabel": "Linguaggio",
+  "analyze": "Analizza",
+  "analyzing": "Analisi in corso…",
+  "inputPlaceholder": "Incolla il tuo codice qui…",
+  "diagramPlaceholder": "Il diagramma apparirà qui.",
+  "noFunctions": "Nessuna funzione trovata nel codice.",
+  "noTables": "Nessuna tabella trovata nel file SQL.",
+  "comingSoon": "Nuova interfaccia in arrivo.",
+  "snippetTab": "Snippet",
+  "projectTab": "Progetto",
+  "uploadFolder": "Carica una cartella",
+  "projectHint": "Seleziona una cartella — i suoi file verranno mappati come un unico grafo di progetto.",
+  "showcaseTitle": "Scoprilo in azione",
+  "showcaseCallTitle": "Grafo delle chiamate",
+  "showcaseCallDesc": "Le funzioni diventano nodi e le chiamate diventano frecce — tracciate tra i file.",
+  "showcaseSchemaTitle": "Schema SQL",
+  "showcaseSchemaDesc": "Le tabelle diventano entità e le chiavi esterne diventano relazioni con cardinalità.",
+  "languagesTitle": "Linguaggi",
+  "languagesSubtitle": "Sei oggi — cinque producono un grafo delle chiamate, SQL produce un diagramma ER.",
+  "languageRows": [
+    { "name": "Python", "kind": "Grafo delle chiamate", "detail": "Funzioni, classi, import, ereditarietà" },
+    { "name": "JavaScript", "kind": "Grafo delle chiamate", "detail": "Funzioni, arrow fns, classi, import ES" },
+    { "name": "TypeScript", "kind": "Grafo delle chiamate", "detail": "Uguale a JS, con sintassi tipata" },
+    { "name": "Go", "kind": "Grafo delle chiamate", "detail": "Funzioni e metodi (senza classi)" },
+    { "name": "Rust", "kind": "Grafo delle chiamate", "detail": "Funzioni e chiamate" },
+    { "name": "SQL", "kind": "Diagramma ER", "detail": "Tabelle, colonne, PK/FK, relazioni" }
+  ],
+  "useCasesTitle": "Dove aiuta",
+  "useCases": [
+    { "title": "Esplorare nuove basi di codice", "desc": "Ottieni una panoramica prima di leggere riga per riga." },
+    { "title": "Revisionare modifiche più velocemente", "desc": "Guarda come si collega una funzione prima di approvare una PR." },
+    { "title": "Insegnare e documentare", "desc": "Trasforma il codice in un diagramma per spiegazioni e documentazione." },
+    { "title": "Esplorare codice sconosciuto", "desc": "Inserisci uno snippet o un file e traccia il flusso." }
+  ],
+  "faqTitle": "FAQ",
+  "faqs": [
+    { "q": "Il mio codice lascia la mia macchina?", "a": "Viene inviato al server per essere analizzato con Tree-sitter, quindi eliminato — nulla viene memorizzato." },
+    { "q": "C'è un limite di dimensioni?", "a": "Fino a 2 MB e 400 file per analisi." },
+    { "q": "Quali linguaggi sono supportati?", "a": "Python, JavaScript, TypeScript, Go, Rust e SQL — con altri in arrivo." },
+    { "q": "È gratuito e open source?", "a": "Sì, licenza MIT. I contributi — specialmente nuovi linguaggi — sono i benvenuti." }
+  ],
+  "ctaTitle": "Mappa il tuo codice ora",
+  "ctaDesc": "Incolla uno snippet e ottieni un diagramme interattivo in pochi secondi.",
+  "ctaOssTitle": "Open source · MIT",
+  "ctaOssDesc": "Creato per essere esteso. Metti una stella o contribuisci risolvendo un'issue.",
+  "ctaStar": "Stella su GitHub",
+  "ctaContribute": "Buone prime issue",
+  "notFoundTitle": "Questa pagina si è persa nel grafo",
+  "notFoundDesc": "Il link potrebbe essere interrotto o la pagina potrebbe essere stata spostata. Torniamo in pista.",
+  "notFoundHome": "Torna alla home",
+  "notFoundApp": "Apri l'app"
+}

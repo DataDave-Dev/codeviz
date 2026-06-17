@@ -1,4 +1,3 @@
-import type { Locale } from "@/i18n/config";
 
 export type DocSlug =
   | "introduction"
@@ -12,7 +11,7 @@ export type DocSlug =
 
 export type DocNavItem = {
   slug: DocSlug;
-  title: Record<Locale, string>;
+  title: Record<string, string>;
 };
 
 // Order here drives the sidebar and prev/next navigation.

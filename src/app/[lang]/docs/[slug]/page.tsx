@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { isLocale, locales, type Locale } from "@/i18n/config";
+import { getDictionary } from "@/i18n/dictionaries";
 import { DOC_NAV, DOC_SLUGS, type DocSlug } from "@/lib/docs";
 import { DOC_COMPONENTS } from "@/components/docs/registry";
 
@@ -17,7 +18,7 @@ export async function generateMetadata({
   const { lang, slug } = await params;
   const item = DOC_NAV.find((d) => d.slug === slug);
   const locale: Locale = isLocale(lang) ? lang : "en";
-  const title = item ? item.title[locale] : "Docs";
+  const title = item ? (item.title[locale] ?? item.title["en"]) : "Docs";
   return { title: `${title} — Weftmap` };
 }
 
@@ -28,6 +29,7 @@ export default async function DocPage({
 }) {
   const { lang, slug } = await params;
   if (!isLocale(lang)) notFound();
+  const t = getDictionary(lang as Locale);
 
   const index = DOC_NAV.findIndex((d) => d.slug === slug);
   if (index === -1) notFound();
@@ -47,10 +49,10 @@ export default async function DocPage({
             className="group rounded-xl border border-[#e2e8f0] bg-white p-4 transition-all hover:-translate-y-0.5 hover:border-[#c7d2fe] hover:shadow-[0_8px_24px_-12px_rgba(15,23,42,0.18)]"
           >
             <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-[#94a3b8]">
-              {lang === "es" ? "Anterior" : "Previous"}
+              {t.previous}
             </span>
             <span className="mt-1 block font-medium text-[#0f172a] transition-colors group-hover:text-[#4f46e5]">
-              ← {prev.title[lang]}
+              ← {prev.title[lang] ?? prev.title["en"]}
             </span>
           </Link>
         ) : (
@@ -62,10 +64,10 @@ export default async function DocPage({
             className="group rounded-xl border border-[#e2e8f0] bg-white p-4 text-right transition-all hover:-translate-y-0.5 hover:border-[#c7d2fe] hover:shadow-[0_8px_24px_-12px_rgba(15,23,42,0.18)]"
           >
             <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-[#94a3b8]">
-              {lang === "es" ? "Siguiente" : "Next"}
+              {t.next}
             </span>
             <span className="mt-1 block font-medium text-[#0f172a] transition-colors group-hover:text-[#4f46e5]">
-              {next.title[lang]} →
+              {next.title[lang] ?? next.title["en"]} →
             </span>
           </Link>
         ) : (

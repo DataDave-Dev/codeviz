@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { locales, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
 import Logo from "./Logo";
@@ -9,9 +10,21 @@ import ThemeToggle from "./ThemeToggle";
 
 const REPO = "https://github.com/DataDave-Dev/weftmap";
 
+const LANGUAGE_NAMES: Record<string, string> = {
+  en: "English",
+  es: "Español",
+  pt: "Português",
+  ar: "العربية",
+  fr: "Français",
+  it: "Italiano",
+};
+
 export default function Header({ lang }: { lang: Locale }) {
   const t = getDictionary(lang);
   const [scrolled, setScrolled] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const pathname = usePathname();
+
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -21,6 +34,16 @@ export default function Header({ lang }: { lang: Locale }) {
       cancelAnimationFrame(id);
     };
   }, []);
+
+  const getRedirectPath = (targetLocale: string) => {
+    if (!pathname) return `/${targetLocale}`;
+    const segments = pathname.split("/");
+    if (segments.length > 1 && (locales as readonly string[]).includes(segments[1])) {
+      segments[1] = targetLocale;
+      return segments.join("/");
+    }
+    return `/${targetLocale}`;
+  };
 
   const linkClass =
     "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[13px] text-[#475569] hover:text-[#0f172a] hover:bg-black/[0.04] transition-colors dark:text-[#94a3b8] dark:hover:text-[#e6e9ef] dark:hover:bg-white/[0.06]";
@@ -77,34 +100,50 @@ export default function Header({ lang }: { lang: Locale }) {
           {t.getStarted}
         </Link>
 
-        <nav
-          aria-label="Language"
-          className="inline-flex shrink-0 gap-0.5 p-[3px] rounded-full border bg-black/[0.04] border-[#e2e8f0] dark:bg-white/[0.06] dark:border-[#232a36]"
-        >
-          {locales.map((locale) => {
-            const active = locale === lang;
-            return (
-              <Link
-                key={locale}
-                href={`/${locale}`}
-                aria-current={active ? "page" : undefined}
-                className={`group px-3.5 py-[5px] rounded-full transition-colors ${
-                  active ? "bg-black/[0.06] dark:bg-white/[0.12]" : ""
-                }`}
+        <div className="relative shrink-0">
+          <button
+            onClick={() => setDropdownOpen(!dropdownOpen)}
+            aria-expanded={dropdownOpen}
+            aria-haspopup="listbox"
+            aria-label="Select language"
+            className="flex items-center gap-1.5 px-3.5 py-[6px] rounded-full border text-[13px] font-semibold transition-all bg-black/[0.04] border-[#e2e8f0] text-[#0f172a] hover:bg-black/[0.08] dark:bg-white/[0.08] dark:border-white/[0.14] dark:text-[#cbd5e1] dark:hover:bg-white/[0.16]"
+          >
+            <span>🌐</span>
+            <span>{LANGUAGE_NAMES[lang] ?? lang.toUpperCase()}</span>
+            <span className="text-[9px] opacity-60">▼</span>
+          </button>
+          
+          {dropdownOpen && (
+            <>
+              <div 
+                className="fixed inset-0 z-10" 
+                onClick={() => setDropdownOpen(false)} 
+              />
+              <div
+                className="absolute right-0 rtl:left-0 rtl:right-auto z-20 mt-2 w-36 rounded-xl border p-1 shadow-lg transition-all bg-white border-[#e2e8f0] dark:bg-[#0b0d12] dark:border-[#232a36]"
               >
-                <span
-                  className={`text-[13px] font-semibold transition-colors ${
-                    active
-                      ? "text-[#0f172a] dark:text-[#e6e9ef]"
-                      : "text-[#64748b] group-hover:text-[#0f172a] dark:text-[#8b96a7] dark:group-hover:text-[#e6e9ef]"
-                  }`}
-                >
-                  {locale.toUpperCase()}
-                </span>
-              </Link>
-            );
-          })}
-        </nav>
+                {locales.map((locale) => {
+                  const active = locale === lang;
+                  return (
+                    <Link
+                      key={locale}
+                      href={getRedirectPath(locale)}
+                      onClick={() => setDropdownOpen(false)}
+                      className={`flex items-center justify-between w-full px-3 py-1.5 rounded-lg text-left text-[13px] font-medium transition-colors ${
+                        active
+                          ? "bg-[#f1f5f9] text-[#4f46e5] dark:bg-white/[0.08] dark:text-white"
+                          : "text-[#475569] hover:bg-[#f8fafc] hover:text-[#0f172a] dark:text-[#94a3b8] dark:hover:bg-white/[0.04] dark:hover:text-white"
+                      }`}
+                    >
+                      <span>{LANGUAGE_NAMES[locale] ?? locale.toUpperCase()}</span>
+                      {active && <span className="text-[10px]">✓</span>}
+                    </Link>
+                  );
+                })}
+              </div>
+            </>
+          )}
+        </div>
       </div>
     </header>
   );

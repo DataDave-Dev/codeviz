@@ -1,11 +1,14 @@
 import type { Locale } from "./config";
-import en from "./dictionaries/en.json";
-import es from "./dictionaries/es.json";
+import type en from "./dictionaries/en.json";
 
 export type Dictionary = typeof en;
 
-const dictionaries: Record<Locale, Dictionary> = { en, es };
-
 export function getDictionary(locale: Locale): Dictionary {
-  return dictionaries[locale];
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    return require(`./dictionaries/${locale}.json`);
+  } catch {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    return require("./dictionaries/en.json");
+  }
 }

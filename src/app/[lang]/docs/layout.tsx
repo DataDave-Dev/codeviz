@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { notFound } from "next/navigation";
 import { isLocale, locales, type Locale } from "@/i18n/config";
+import { getDictionary } from "@/i18n/dictionaries";
 import DocsSidebar from "@/components/docs/DocsSidebar";
 
 export function generateStaticParams() {
@@ -16,13 +17,14 @@ export default async function DocsLayout({
 }) {
   const { lang } = await params;
   if (!isLocale(lang)) notFound();
+  const t = getDictionary(lang as Locale);
 
   return (
     <div className="mx-auto grid max-w-[1320px] gap-10 px-6 py-12 lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-16 lg:py-20">
         {/* Mobile docs nav (sidebar is hidden below lg). */}
         <details className="group mb-2 rounded-xl border border-[#e2e8f0] bg-white lg:hidden">
           <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-3 text-sm font-medium text-[#0f172a] [&::-webkit-details-marker]:hidden">
-            {lang === "es" ? "Documentación" : "Documentation"}
+            {t.documentation}
             <span aria-hidden="true" className="font-mono text-[#94a3b8] transition-transform group-open:rotate-180">
               ▾
             </span>

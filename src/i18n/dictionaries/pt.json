@@ -1,0 +1,112 @@
+{
+  "title": "Weftmap",
+  "badge": "Open source · Multi-idioma",
+  "hero": "Entenda qualquer código à primeira vista.",
+  "tagline": "Cole o código e obtenha um grafo de chamadas interativo. Multi-idioma via Tree-sitter.",
+  "getStarted": "Começar",
+  "learnMore": "Saiba mais",
+  "supports": "Suporta",
+  "moreLanguagesSoon": "Mais idiomas em breve",
+  "howTitle": "Como funciona",
+  "steps": [
+    {
+      "title": "Cole o seu código",
+      "desc": "Escolha um idioma e cole o fragmento — sem configuração, sem upload."
+    },
+    {
+      "title": "O Tree-sitter analisa",
+      "desc": "Uma árvore de sintaxe real é construída no servidor, rápida e independente de linguagem."
+    },
+    {
+      "title": "Explore o grafo de chamadas",
+      "desc": "Mova, amplie e acompanhe como as funções se chamam."
+    }
+  ],
+  "featuresTitle": "Feito para ler código",
+  "features": [
+    {
+      "title": "Multi-idioma",
+      "desc": "Um mecanismo de análise, vários idiomas. Distribuído por Tree-sitter."
+    },
+    {
+      "title": "Diagramas interativos",
+      "desc": "Mova, amplie e explore o grafo de chamadas do seu código."
+    },
+    {
+      "title": "Plugável",
+      "desc": "Adicione um novo idioma em poucas linhas. Feito para ser estendido."
+    },
+    {
+      "title": "Análise precisa",
+      "desc": "Árvores de sintaxe reais via Tree-sitter, sem expressões regulares frágeis."
+    },
+    {
+      "title": "Sem configuração",
+      "desc": "Cole um fragmento e visualize. Nada para instalar."
+    },
+    {
+      "title": "Código aberto",
+      "desc": "Gratuito, licenciado sob a MIT e voltado para a comunidade."
+    }
+  ],
+  "license": "Licença",
+  "contribute": "Contribuir",
+  "footerProduct": "Produto",
+  "footerResources": "Recursos",
+  "footerNote": "Código aberto, feito para ser estendido.",
+  "documentation": "Documentação",
+  "previous": "Anterior",
+  "next": "Próximo",
+  "appTitle": "Experimente agora",
+  "languageLabel": "Idioma",
+  "analyze": "Analisar",
+  "analyzing": "Analisando…",
+  "inputPlaceholder": "Cole o seu código aqui…",
+  "diagramPlaceholder": "O diagrama aparecerá aqui.",
+  "noFunctions": "Nenhuma função encontrada no código.",
+  "noTables": "Nenhuma tabela encontrada no SQL.",
+  "comingSoon": "Nova interface em breve.",
+  "snippetTab": "Snippet",
+  "projectTab": "Projeto",
+  "uploadFolder": "Enviar pasta",
+  "projectHint": "Escolha uma pasta — seus arquivos serão mapeados como um único grafo de projeto.",
+  "showcaseTitle": "Veja em ação",
+  "showcaseCallTitle": "Grafo de chamadas",
+  "showcaseCallDesc": "Funções se tornam nós e chamadas se tornam setas — rastreadas entre arquivos.",
+  "showcaseSchemaTitle": "Esquema SQL",
+  "showcaseSchemaDesc": "Tabelas se tornam entidades e chaves estrangeiras se tornam relacionamentos com cardinalidade.",
+  "languagesTitle": "Idiomas",
+  "languagesSubtitle": "Seis hoje — cinco produzem grafo de chamadas, SQL produz diagrama ER.",
+  "languageRows": [
+    { "name": "Python", "kind": "Grafo de chamadas", "detail": "Funções, classes, imports, herança" },
+    { "name": "JavaScript", "kind": "Grafo de chamadas", "detail": "Funções, arrow fns, classes, imports ES" },
+    { "name": "TypeScript", "kind": "Grafo de chamadas", "detail": "Igual ao JS, com gramática tipada" },
+    { "name": "Go", "kind": "Grafo de chamadas", "detail": "Funções e métodos (sem classes)" },
+    { "name": "Rust", "kind": "Grafo de chamadas", "detail": "Funções e chamadas" },
+    { "name": "SQL", "kind": "Diagrama ER", "detail": "Tabelas, colunas, PK/FK, relacionamentos" }
+  ],
+  "useCasesTitle": "Onde ajuda",
+  "useCases": [
+    { "title": "Integração em novos codebases", "desc": "Entenda a estrutura geral antes de ler linha por linha." },
+    { "title": "Revise alterações mais rápido", "desc": "Veja como uma função se conecta antes de aprovar um PR." },
+    { "title": "Ensine e documente", "desc": "Transforme código em diagramas para explicações e documentação." },
+    { "title": "Explore código desconhecido", "desc": "Cole um fragmento ou arquivo e rastreie o fluxo." }
+  ],
+  "faqTitle": "Perguntas Frequentes (FAQ)",
+  "faqs": [
+    { "q": "Meu código sai da minha máquina?", "a": "Ele é enviado ao servidor para ser analisado com o Tree-sitter, depois descartado — nada é armazenado." },
+    { "q": "Existe um limite de tamanho?", "a": "Até 2 MB e 400 arquivos por análise." },
+    { "q": "Quais idiomas são suportados?", "a": "Python, JavaScript, TypeScript, Go, Rust e SQL — com mais a caminho." },
+    { "q": "É gratuito e de código aberto?", "a": "Sim, licenciado sob a MIT. Contribuições — especialmente novos idiomas — são bem-vindas." }
+  ],
+  "ctaTitle": "Mapeie seu código agora",
+  "ctaDesc": "Cole um fragmento e obtenha um diagrama interativo em segundos.",
+  "ctaOssTitle": "Código aberto · MIT",
+  "ctaOssDesc": "Feito para ser estendido. Dê uma estrela ou escolha uma issue recomendada.",
+  "ctaStar": "Estrela no GitHub",
+  "ctaContribute": "Boas primeiras issues",
+  "notFoundTitle": "Esta página se perdeu no grafo",
+  "notFoundDesc": "O link pode estar quebrado ou a página pode ter sido movida. Vamos colocar você de volta nos trilhos.",
+  "notFoundHome": "Voltar ao início",
+  "notFoundApp": "Abrir o aplicativo"
+}
