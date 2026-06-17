@@ -256,7 +256,9 @@ export default function CodeWorkspace({
       })),
     );
     let total = 0;
-    const kept = loaded.filter((f) => (total += f.content.length) <= MAX_TOTAL_BYTES);
+    const kept = loaded.filter(
+      (f) => (total += f.content.length) <= MAX_TOTAL_BYTES,
+    );
 
     setError(null);
     setFiles(kept);
@@ -297,7 +299,9 @@ export default function CodeWorkspace({
     const next = e.target.value;
     setLanguage(next);
     // Swap the demo snippet only while the editor still holds an untouched sample.
-    setCode((cur) => (SAMPLE_VALUES.includes(cur) ? SAMPLES[next] ?? cur : cur));
+    setCode((cur) =>
+      SAMPLE_VALUES.includes(cur) ? (SAMPLES[next] ?? cur) : cur,
+    );
     setFiles(null); // file extensions differ per language
   }
 
@@ -309,7 +313,8 @@ export default function CodeWorkspace({
   }
 
   function syncScroll(e: React.UIEvent<HTMLTextAreaElement>) {
-    if (gutterRef.current) gutterRef.current.scrollTop = e.currentTarget.scrollTop;
+    if (gutterRef.current)
+      gutterRef.current.scrollTop = e.currentTarget.scrollTop;
   }
 
   const canAnalyze =
@@ -319,17 +324,21 @@ export default function CodeWorkspace({
   const tab = (value: "snippet" | "project", label: string) => (
     <button
       onClick={() => setMode(value)}
-      className={`px-3 py-1 rounded-md text-[12px] font-medium transition-colors ${mode === value
+      className={`px-3 py-1 rounded-md text-[12px] font-medium transition-colors ${
+        mode === value
           ? "bg-[#eef2ff] dark:bg-[#1b1f3a] text-[#0f172a] dark:text-[#e6e9ef]"
           : "text-[#475569] dark:text-[#9aa6b8] hover:text-[#0f172a]"
-        }`}
+      }`}
     >
       {label}
     </button>
   );
 
   return (
-    <div ref={containerRef} className="flex flex-col lg:flex-row h-[calc(100vh-65px)]">
+    <div
+      ref={containerRef}
+      className="flex flex-col lg:flex-row h-[calc(100vh-65px)]"
+    >
       {/* hidden folder picker (webkitdirectory set via ref) */}
       <input
         ref={folderRef}
@@ -390,13 +399,26 @@ export default function CodeWorkspace({
               >
                 <div className="text-center px-6">
                   <div className="mx-auto mb-4 grid place-items-center w-12 h-12 rounded-xl border border-[#e2e8f0] dark:border-[#232a36] text-[#475569] dark:text-[#9aa6b8] group-hover:text-[#0f172a] transition-colors">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                    <svg
+                      width="22"
+                      height="22"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.6"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
                       <path d="M3 7a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
                       <path d="M12 11v5M9.5 13.5 12 11l2.5 2.5" />
                     </svg>
                   </div>
-                  <p className="font-medium text-[#0f172a] dark:text-[#e6e9ef]">{uploadFolder}</p>
-                  <p className="mt-1.5 text-[13px] text-[#475569] dark:text-[#9aa6b8] max-w-[34ch]">{projectHint}</p>
+                  <p className="font-medium text-[#0f172a] dark:text-[#e6e9ef]">
+                    {uploadFolder}
+                  </p>
+                  <p className="mt-1.5 text-[13px] text-[#475569] dark:text-[#9aa6b8] max-w-[34ch]">
+                    {projectHint}
+                  </p>
                 </div>
               </button>
             ) : (
@@ -496,7 +518,10 @@ export default function CodeWorkspace({
                 {error}
               </div>
             ) : graph ? (
-              <Diagram graph={graph} emptyLabel={language === "sql" ? noTables : noFunctions} />
+              <Diagram
+                graph={graph}
+                emptyLabel={language === "sql" ? noTables : noFunctions}
+              />
             ) : (
               <div className="grid place-items-center h-full px-6 text-center text-sm text-[#475569] dark:text-[#9aa6b8]">
                 {diagramPlaceholder}

@@ -39,6 +39,7 @@ Es el tipo de contribución más valioso. Los pasos están en el
 
 ¡Damos la bienvenida a las traducciones para que Weftmap sea accesible en todo el mundo!
 Para agregar una traducción:
+
 1. Registra el nuevo código de locale (por ejemplo, `fr`) en [src/i18n/config.ts](file:///src/i18n/config.ts).
 2. Copia [src/i18n/dictionaries/en.json](file:///src/i18n/dictionaries/en.json) a `src/i18n/dictionaries/<locale>.json` y traduce los valores.
 3. Ejecuta `pnpm test` para verificar que el diccionario de traducción coincida con las claves de la plantilla de origen.

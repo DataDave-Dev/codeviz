@@ -78,26 +78,74 @@
   "languagesTitle": "Langages",
   "languagesSubtitle": "Six aujourd'hui — cinq produisent un graphe d'appels, SQL produit un schéma relationnel.",
   "languageRows": [
-    { "name": "Python", "kind": "Graphe d'appels", "detail": "Fonctions, classes, imports, héritage" },
-    { "name": "JavaScript", "kind": "Graphe d'appels", "detail": "Fonctions, fonctions fléchées, classes, imports ES" },
-    { "name": "TypeScript", "kind": "Graphe d'appels", "detail": "Identique à JS, avec prise en charge des types" },
-    { "name": "Go", "kind": "Graphe d'appels", "detail": "Fonctions et méthodes (pas de classes)" },
-    { "name": "Rust", "kind": "Graphe d'appels", "detail": "Fonctions et appels" },
-    { "name": "SQL", "kind": "Schéma relationnel", "detail": "Tables, colonnes, PK/FK, relations" }
+    {
+      "name": "Python",
+      "kind": "Graphe d'appels",
+      "detail": "Fonctions, classes, imports, héritage"
+    },
+    {
+      "name": "JavaScript",
+      "kind": "Graphe d'appels",
+      "detail": "Fonctions, fonctions fléchées, classes, imports ES"
+    },
+    {
+      "name": "TypeScript",
+      "kind": "Graphe d'appels",
+      "detail": "Identique à JS, avec prise en charge des types"
+    },
+    {
+      "name": "Go",
+      "kind": "Graphe d'appels",
+      "detail": "Fonctions et méthodes (pas de classes)"
+    },
+    {
+      "name": "Rust",
+      "kind": "Graphe d'appels",
+      "detail": "Fonctions et appels"
+    },
+    {
+      "name": "SQL",
+      "kind": "Schéma relationnel",
+      "detail": "Tables, colonnes, PK/FK, relations"
+    }
   ],
   "useCasesTitle": "Cas d'usage",
   "useCases": [
-    { "title": "Découvrir une base de code", "desc": "Prenez vos repères avant de lire ligne par ligne." },
-    { "title": "Revoir les changements plus vite", "desc": "Visualisez les dépendances d'une fonction avant d'approuver une PR." },
-    { "title": "Enseigner et documenter", "desc": "Transformez du code en diagramme pour vos explications." },
-    { "title": "Explorer du code inconnu", "desc": "Collez un extrait ou un fichier et tracez le flux." }
+    {
+      "title": "Découvrir une base de code",
+      "desc": "Prenez vos repères avant de lire ligne par ligne."
+    },
+    {
+      "title": "Revoir les changements plus vite",
+      "desc": "Visualisez les dépendances d'une fonction avant d'approuver une PR."
+    },
+    {
+      "title": "Enseigner et documenter",
+      "desc": "Transformez du code en diagramme pour vos explications."
+    },
+    {
+      "title": "Explorer du code inconnu",
+      "desc": "Collez un extrait ou un fichier et tracez le flux."
+    }
   ],
   "faqTitle": "FAQ",
   "faqs": [
-    { "q": "Mon code quitte-t-il ma machine ?", "a": "Il est envoyé au serveur pour être analysé avec Tree-sitter, puis jeté — rien n'est stocké." },
-    { "q": "Y a-t-il une limite de taille ?", "a": "Jusqu'à 2 Mo et 400 fichiers par analyse." },
-    { "q": "Quels langages sont pris en charge ?", "a": "Python, JavaScript, TypeScript, Go, Rust et SQL — avec d'autres à venir." },
-    { "q": "Est-ce gratuit et open source ?", "a": "Oui, sous licence MIT. Les contributions — surtout les nouveaux langages — sont bienvenues." }
+    {
+      "q": "Mon code quitte-t-il ma machine ?",
+      "a": "Il est envoyé au serveur pour être analysé avec Tree-sitter, puis jeté — rien n'est stocké."
+    },
+    {
+      "q": "Y a-t-il une limite de taille ?",
+      "a": "Jusqu'à 2 Mo et 400 fichiers par analyse."
+    },
+    {
+      "q": "Quels langages sont pris en charge ?",
+      "a": "Python, JavaScript, TypeScript, Go, Rust et SQL — avec d'autres à venir."
+    },
+    {
+      "q": "Est-ce gratuit et open source ?",
+      "a": "Oui, sous licence MIT. Les contributions — surtout les nouveaux langages — sont bienvenues."
+    }
   ],
   "ctaTitle": "Cartographiez votre code",
   "ctaDesc": "Collez un extrait et obtenez un diagramme interactif en quelques secondes.",

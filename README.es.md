@@ -45,7 +45,7 @@ a la vez.
   layout de dagre).
 - **Call graph interno** — muestra llamadas entre funciones definidas en tu
   código; las llamadas a builtins/librerías se filtran para mantener el grafo útil.
-- **Sin pasos de build para el usuario** — pega un snippet y presiona *Analizar*.
+- **Sin pasos de build para el usuario** — pega un snippet y presiona _Analizar_.
 
 ## Cómo funciona
 
@@ -69,15 +69,15 @@ menos código, más fácil de mantener, y el mismo enfoque sirve para cada lengu
 
 ## Stack tecnológico
 
-| Capa | Elección | Por qué |
-|------|----------|---------|
-| Framework | Next.js (App Router) | Frontend + backend en un proyecto y un deploy |
-| Lenguaje | TypeScript | Seguridad de tipos en todo el stack |
-| Parsing | Tree-sitter vía `web-tree-sitter` (WASM) | Una sola API para ~40 lenguajes |
-| Grammars | `tree-sitter-wasms` | Binarios de grammars preconstruidos |
-| Diagrama | React Flow + dagre | Nodos interactivos, layout jerárquico |
-| Tests | Vitest | Tests unitarios rápidos para los analyzers |
-| Gestor de paquetes | pnpm | Instalaciones rápidas y eficientes en disco |
+| Capa               | Elección                                 | Por qué                                       |
+| ------------------ | ---------------------------------------- | --------------------------------------------- |
+| Framework          | Next.js (App Router)                     | Frontend + backend en un proyecto y un deploy |
+| Lenguaje           | TypeScript                               | Seguridad de tipos en todo el stack           |
+| Parsing            | Tree-sitter vía `web-tree-sitter` (WASM) | Una sola API para ~40 lenguajes               |
+| Grammars           | `tree-sitter-wasms`                      | Binarios de grammars preconstruidos           |
+| Diagrama           | React Flow + dagre                       | Nodos interactivos, layout jerárquico         |
+| Tests              | Vitest                                   | Tests unitarios rápidos para los analyzers    |
+| Gestor de paquetes | pnpm                                     | Instalaciones rápidas y eficientes en disco   |
 
 ## Empezar
 
@@ -96,18 +96,18 @@ Pega un snippet, elige **python** o **javascript**, y presiona **Analizar**.
 
 ## Scripts disponibles
 
-| Comando | Qué hace |
-|---------|----------|
-| `pnpm dev` | Levanta el servidor de desarrollo |
-| `pnpm build` | Build de producción |
-| `pnpm start` | Corre el build de producción |
-| `pnpm test` | Corre los tests de los analyzers (Vitest) |
-| `pnpm typecheck` | Verifica tipos con `tsc --noEmit` |
-| `pnpm lint` | Linting con ESLint |
+| Comando          | Qué hace                                  |
+| ---------------- | ----------------------------------------- |
+| `pnpm dev`       | Levanta el servidor de desarrollo         |
+| `pnpm build`     | Build de producción                       |
+| `pnpm start`     | Corre el build de producción              |
+| `pnpm test`      | Corre los tests de los analyzers (Vitest) |
+| `pnpm typecheck` | Verifica tipos con `tsc --noEmit`         |
+| `pnpm lint`      | Linting con ESLint                        |
 
 ## Agregar un lenguaje
 
-Es el tipo de contribución más valioso. La arquitectura es *pluggable*: el
+Es el tipo de contribución más valioso. La arquitectura es _pluggable_: el
 backend adapta el análisis según el lenguaje, y no hace falta tocar nada más.
 
 1. **Agrega el grammar.** Copia `tree-sitter-<lang>.wasm` a `public/wasm/`

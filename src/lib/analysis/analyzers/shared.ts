@@ -22,7 +22,11 @@ export type LangSpec = {
   /** Base-class names a class declaration extends. */
   classBases?: (node: Node) => string[];
   /** Map an import specifier (from `fromFile`) to a file path in the project, or null. */
-  resolveModule: (fromFile: string, specifier: string, paths: Set<string>) => string | null;
+  resolveModule: (
+    fromFile: string,
+    specifier: string,
+    paths: Set<string>,
+  ) => string | null;
 };
 
 const moduleId = (file: string) => `mod::${file}`;
@@ -154,12 +158,24 @@ async function parseFile(
   const imports = new Set<string>();
   const importQuery = language.query(spec.importQuery);
   for (const { node } of importQuery.captures(root)) {
-    const target = spec.resolveModule(source.path, stripQuotes(node.text), paths);
+    const target = spec.resolveModule(
+      source.path,
+      stripQuotes(node.text),
+      paths,
+    );
     if (target && target !== source.path) imports.add(target);
   }
 
   tree.delete();
-  return { file: source.path, defs, methodClass, classes, extendsRel, calls, imports };
+  return {
+    file: source.path,
+    defs,
+    methodClass,
+    classes,
+    extendsRel,
+    calls,
+    imports,
+  };
 }
 
 /** Pick the defining file for a name, preferring local, then imported, then unique. */

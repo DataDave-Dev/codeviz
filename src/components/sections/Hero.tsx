@@ -47,7 +47,11 @@ export default function Hero({
           .from(".js-connector", { y: 8, opacity: 0, duration: 0.4 }, "-=0.25")
           .from(".js-node-main", { y: 12, opacity: 0, duration: 0.45 }, "-=0.2")
           .from(".js-edge", { opacity: 0, duration: 0.4 }, "-=0.05")
-          .from(".js-node-child", { y: 12, opacity: 0, stagger: 0.12 }, "-=0.1");
+          .from(
+            ".js-node-child",
+            { y: 12, opacity: 0, stagger: 0.12 },
+            "-=0.1",
+          );
       });
       // Revert on cleanup so a Strict Mode remount doesn't capture the hidden
       // (opacity: 0) state as the target and leave elements invisible.
@@ -99,7 +103,9 @@ export default function Hero({
           </div>
 
           <div className="js-chips flex items-center flex-wrap gap-2 mt-8">
-            <span className="text-[12.5px] text-[#64748b] dark:text-[#7c8696] mr-0.5">{supports}:</span>
+            <span className="text-[12.5px] text-[#64748b] dark:text-[#7c8696] mr-0.5">
+              {supports}:
+            </span>
             {LANGUAGES.map((language) => (
               <span
                 key={language}

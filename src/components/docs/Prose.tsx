@@ -12,7 +12,11 @@ export function H1({ children }: { children: ReactNode }) {
 }
 
 export function Lead({ children }: { children: ReactNode }) {
-  return <p className="mt-4 text-lg leading-8 text-[#475569] dark:text-[#9aa6b8]">{children}</p>;
+  return (
+    <p className="mt-4 text-lg leading-8 text-[#475569] dark:text-[#9aa6b8]">
+      {children}
+    </p>
+  );
 }
 
 export function H2({ children }: { children: ReactNode }) {
@@ -32,7 +36,11 @@ export function H3({ children }: { children: ReactNode }) {
 }
 
 export function P({ children }: { children: ReactNode }) {
-  return <p className="mt-4 text-[15px] leading-7 text-[#475569] dark:text-[#9aa6b8]">{children}</p>;
+  return (
+    <p className="mt-4 text-[15px] leading-7 text-[#475569] dark:text-[#9aa6b8]">
+      {children}
+    </p>
+  );
 }
 
 export function UL({ children }: { children: ReactNode }) {
@@ -60,7 +68,13 @@ export function Code({ children }: { children: ReactNode }) {
   );
 }
 
-export function CodeBlock({ children, label }: { children: ReactNode; label?: string }) {
+export function CodeBlock({
+  children,
+  label,
+}: {
+  children: ReactNode;
+  label?: string;
+}) {
   return (
     <div className="mt-5 overflow-hidden rounded-xl border border-[#e2e8f0] dark:border-[#232a36] bg-[#f8fafc] dark:bg-[#12151c]">
       {label && (

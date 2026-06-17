@@ -89,12 +89,14 @@ export default function Features({
             <article
               key={feature.title}
               onMouseMove={trackPointer}
-              className={`js-reveal rounded-2xl border border-[#e2e8f0] dark:border-[#232a36] bg-white dark:bg-[#12151c] px-[30px] py-[34px] shadow-[0_1px_3px_rgba(15,23,42,0.06)] transition-all hover:-translate-y-[3px] hover:shadow-[0_12px_30px_-12px_rgba(15,23,42,0.18)] ${big ? "flex flex-col" : ""
-                } ${wide ? tile.span : ""}`}
+              className={`js-reveal rounded-2xl border border-[#e2e8f0] dark:border-[#232a36] bg-white dark:bg-[#12151c] px-[30px] py-[34px] shadow-[0_1px_3px_rgba(15,23,42,0.06)] transition-all hover:-translate-y-[3px] hover:shadow-[0_12px_30px_-12px_rgba(15,23,42,0.18)] ${
+                big ? "flex flex-col" : ""
+              } ${wide ? tile.span : ""}`}
             >
               <span
-                className={`inline-flex items-center justify-center rounded-xl border border-[#e2e8f0] dark:border-[#232a36] bg-[#f1f5f9] dark:bg-[#1a1f29] text-[#4f46e5] dark:text-[#a5b4fc] mb-[18px] ${big ? "w-[52px] h-[52px]" : "w-11 h-11"
-                  }`}
+                className={`inline-flex items-center justify-center rounded-xl border border-[#e2e8f0] dark:border-[#232a36] bg-[#f1f5f9] dark:bg-[#1a1f29] text-[#4f46e5] dark:text-[#a5b4fc] mb-[18px] ${
+                  big ? "w-[52px] h-[52px]" : "w-11 h-11"
+                }`}
               >
                 {ICONS[i]}
               </span>
@@ -110,7 +112,14 @@ export default function Features({
               {big && (
                 <div className="mt-auto pt-7">
                   <div className="flex flex-wrap gap-2">
-                    {["Python", "JavaScript", "TypeScript", "Go", "Rust", "SQL"].map((l) => (
+                    {[
+                      "Python",
+                      "JavaScript",
+                      "TypeScript",
+                      "Go",
+                      "Rust",
+                      "SQL",
+                    ].map((l) => (
                       <span
                         key={l}
                         className="px-2.5 py-1 rounded-md border border-[#e2e8f0] dark:border-[#232a36] bg-[#f8fafc] dark:bg-[#12151c] font-mono text-xs text-[#475569] dark:text-[#9aa6b8]"

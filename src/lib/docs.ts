@@ -1,4 +1,3 @@
-
 export type DocSlug =
   | "introduction"
   | "getting-started"
@@ -18,11 +17,17 @@ export type DocNavItem = {
 export const DOC_NAV: DocNavItem[] = [
   { slug: "introduction", title: { es: "Introducción", en: "Introduction" } },
   { slug: "getting-started", title: { es: "Empezar", en: "Getting started" } },
-  { slug: "reading-the-diagram", title: { es: "Leer el diagrama", en: "Reading the diagram" } },
+  {
+    slug: "reading-the-diagram",
+    title: { es: "Leer el diagrama", en: "Reading the diagram" },
+  },
   { slug: "languages", title: { es: "Lenguajes", en: "Languages" } },
   { slug: "how-it-works", title: { es: "Cómo funciona", en: "How it works" } },
   { slug: "api", title: { es: "Referencia de la API", en: "API reference" } },
-  { slug: "adding-a-language", title: { es: "Agregar un lenguaje", en: "Adding a language" } },
+  {
+    slug: "adding-a-language",
+    title: { es: "Agregar un lenguaje", en: "Adding a language" },
+  },
   { slug: "faq", title: { es: "FAQ", en: "FAQ" } },
 ];
 

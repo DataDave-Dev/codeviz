@@ -17,7 +17,10 @@ export default function Faq({ title, items }: Props) {
 
       <div className="mt-10 border-t border-[#e2e8f0] dark:border-[#232a36]">
         {items.map((item) => (
-          <details key={item.q} className="group border-b border-[#e2e8f0] dark:border-[#232a36]">
+          <details
+            key={item.q}
+            className="group border-b border-[#e2e8f0] dark:border-[#232a36]"
+          >
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-5 text-[16px] font-medium text-[#0f172a] dark:text-[#e6e9ef] transition-colors hover:text-[#4f46e5] [&::-webkit-details-marker]:hidden">
               {item.q}
               <span
@@ -27,7 +30,9 @@ export default function Faq({ title, items }: Props) {
                 +
               </span>
             </summary>
-            <p className="max-w-[64ch] pb-5 text-[15px] leading-[1.7] text-[#475569] dark:text-[#9aa6b8]">{item.a}</p>
+            <p className="max-w-[64ch] pb-5 text-[15px] leading-[1.7] text-[#475569] dark:text-[#9aa6b8]">
+              {item.a}
+            </p>
           </details>
         ))}
       </div>

@@ -78,26 +78,74 @@
   "languagesTitle": "Linguaggi",
   "languagesSubtitle": "Sei oggi — cinque producono un grafo delle chiamate, SQL produce un diagramma ER.",
   "languageRows": [
-    { "name": "Python", "kind": "Grafo delle chiamate", "detail": "Funzioni, classi, import, ereditarietà" },
-    { "name": "JavaScript", "kind": "Grafo delle chiamate", "detail": "Funzioni, arrow fns, classi, import ES" },
-    { "name": "TypeScript", "kind": "Grafo delle chiamate", "detail": "Uguale a JS, con sintassi tipata" },
-    { "name": "Go", "kind": "Grafo delle chiamate", "detail": "Funzioni e metodi (senza classi)" },
-    { "name": "Rust", "kind": "Grafo delle chiamate", "detail": "Funzioni e chiamate" },
-    { "name": "SQL", "kind": "Diagramma ER", "detail": "Tabelle, colonne, PK/FK, relazioni" }
+    {
+      "name": "Python",
+      "kind": "Grafo delle chiamate",
+      "detail": "Funzioni, classi, import, ereditarietà"
+    },
+    {
+      "name": "JavaScript",
+      "kind": "Grafo delle chiamate",
+      "detail": "Funzioni, arrow fns, classi, import ES"
+    },
+    {
+      "name": "TypeScript",
+      "kind": "Grafo delle chiamate",
+      "detail": "Uguale a JS, con sintassi tipata"
+    },
+    {
+      "name": "Go",
+      "kind": "Grafo delle chiamate",
+      "detail": "Funzioni e metodi (senza classi)"
+    },
+    {
+      "name": "Rust",
+      "kind": "Grafo delle chiamate",
+      "detail": "Funzioni e chiamate"
+    },
+    {
+      "name": "SQL",
+      "kind": "Diagramma ER",
+      "detail": "Tabelle, colonne, PK/FK, relazioni"
+    }
   ],
   "useCasesTitle": "Dove aiuta",
   "useCases": [
-    { "title": "Esplorare nuove basi di codice", "desc": "Ottieni una panoramica prima di leggere riga per riga." },
-    { "title": "Revisionare modifiche più velocemente", "desc": "Guarda come si collega una funzione prima di approvare una PR." },
-    { "title": "Insegnare e documentare", "desc": "Trasforma il codice in un diagramma per spiegazioni e documentazione." },
-    { "title": "Esplorare codice sconosciuto", "desc": "Inserisci uno snippet o un file e traccia il flusso." }
+    {
+      "title": "Esplorare nuove basi di codice",
+      "desc": "Ottieni una panoramica prima di leggere riga per riga."
+    },
+    {
+      "title": "Revisionare modifiche più velocemente",
+      "desc": "Guarda come si collega una funzione prima di approvare una PR."
+    },
+    {
+      "title": "Insegnare e documentare",
+      "desc": "Trasforma il codice in un diagramma per spiegazioni e documentazione."
+    },
+    {
+      "title": "Esplorare codice sconosciuto",
+      "desc": "Inserisci uno snippet o un file e traccia il flusso."
+    }
   ],
   "faqTitle": "FAQ",
   "faqs": [
-    { "q": "Il mio codice lascia la mia macchina?", "a": "Viene inviato al server per essere analizzato con Tree-sitter, quindi eliminato — nulla viene memorizzato." },
-    { "q": "C'è un limite di dimensioni?", "a": "Fino a 2 MB e 400 file per analisi." },
-    { "q": "Quali linguaggi sono supportati?", "a": "Python, JavaScript, TypeScript, Go, Rust e SQL — con altri in arrivo." },
-    { "q": "È gratuito e open source?", "a": "Sì, licenza MIT. I contributi — specialmente nuovi linguaggi — sono i benvenuti." }
+    {
+      "q": "Il mio codice lascia la mia macchina?",
+      "a": "Viene inviato al server per essere analizzato con Tree-sitter, quindi eliminato — nulla viene memorizzato."
+    },
+    {
+      "q": "C'è un limite di dimensioni?",
+      "a": "Fino a 2 MB e 400 file per analisi."
+    },
+    {
+      "q": "Quali linguaggi sono supportati?",
+      "a": "Python, JavaScript, TypeScript, Go, Rust e SQL — con altri in arrivo."
+    },
+    {
+      "q": "È gratuito e open source?",
+      "a": "Sì, licenza MIT. I contributi — specialmente nuovi linguaggi — sono i benvenuti."
+    }
   ],
   "ctaTitle": "Mappa il tuo codice ora",
   "ctaDesc": "Incolla uno snippet e ottieni un diagramme interattivo in pochi secondi.",

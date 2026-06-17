@@ -52,20 +52,73 @@ export default function HeroPreview() {
           </marker>
         </defs>
 
-        <path className="edge-flow js-edge" d="M160 46 C 130 70, 95 80, 72 100" markerEnd="url(#cv-arrow)" />
-        <path className="edge-flow js-edge" d="M160 46 C 190 70, 225 80, 248 100" markerEnd="url(#cv-arrow)" />
+        <path
+          className="edge-flow js-edge"
+          d="M160 46 C 130 70, 95 80, 72 100"
+          markerEnd="url(#cv-arrow)"
+        />
+        <path
+          className="edge-flow js-edge"
+          d="M160 46 C 190 70, 225 80, 248 100"
+          markerEnd="url(#cv-arrow)"
+        />
 
         <g className="js-node-main">
-          <rect className="fill-[#eef2ff] stroke-[#4f46e5]" x="110" y="12" width="100" height="34" rx="9" />
-          <text className="fill-[#4f46e5] font-mono text-[13px] font-semibold" x="160" y="29" textAnchor="middle" dominantBaseline="central">main</text>
+          <rect
+            className="fill-[#eef2ff] stroke-[#4f46e5]"
+            x="110"
+            y="12"
+            width="100"
+            height="34"
+            rx="9"
+          />
+          <text
+            className="fill-[#4f46e5] font-mono text-[13px] font-semibold"
+            x="160"
+            y="29"
+            textAnchor="middle"
+            dominantBaseline="central"
+          >
+            main
+          </text>
         </g>
         <g className="js-node-child">
-          <rect className="fill-white stroke-[#cbd5e1]" x="20" y="104" width="100" height="34" rx="9" />
-          <text className="fill-[#0f172a] font-mono text-[13px]" x="70" y="121" textAnchor="middle" dominantBaseline="central">load</text>
+          <rect
+            className="fill-white stroke-[#cbd5e1]"
+            x="20"
+            y="104"
+            width="100"
+            height="34"
+            rx="9"
+          />
+          <text
+            className="fill-[#0f172a] font-mono text-[13px]"
+            x="70"
+            y="121"
+            textAnchor="middle"
+            dominantBaseline="central"
+          >
+            load
+          </text>
         </g>
         <g className="js-node-child">
-          <rect className="fill-white stroke-[#cbd5e1]" x="200" y="104" width="100" height="34" rx="9" />
-          <text className="fill-[#0f172a] font-mono text-[13px]" x="250" y="121" textAnchor="middle" dominantBaseline="central">save</text>
+          <rect
+            className="fill-white stroke-[#cbd5e1]"
+            x="200"
+            y="104"
+            width="100"
+            height="34"
+            rx="9"
+          />
+          <text
+            className="fill-[#0f172a] font-mono text-[13px]"
+            x="250"
+            y="121"
+            textAnchor="middle"
+            dominantBaseline="central"
+          >
+            save
+          </text>
         </g>
       </svg>
     </div>

@@ -30,7 +30,11 @@ export default async function RootLayout({
   const t = getDictionary(lang as Locale);
 
   return (
-    <html lang={lang as Locale} dir={lang === "ar" ? "rtl" : "ltr"} suppressHydrationWarning>
+    <html
+      lang={lang as Locale}
+      dir={lang === "ar" ? "rtl" : "ltr"}
+      suppressHydrationWarning
+    >
       <head>
         <script
           dangerouslySetInnerHTML={{

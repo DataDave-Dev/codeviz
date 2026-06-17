@@ -38,7 +38,10 @@ export default function Header({ lang }: { lang: Locale }) {
   const getRedirectPath = (targetLocale: string) => {
     if (!pathname) return `/${targetLocale}`;
     const segments = pathname.split("/");
-    if (segments.length > 1 && (locales as readonly string[]).includes(segments[1])) {
+    if (
+      segments.length > 1 &&
+      (locales as readonly string[]).includes(segments[1])
+    ) {
       segments[1] = targetLocale;
       return segments.join("/");
     }
@@ -65,7 +68,10 @@ export default function Header({ lang }: { lang: Locale }) {
       </Link>
 
       <div className="flex items-center gap-2 sm:gap-3">
-        <nav aria-label="Sections" className="hidden sm:flex items-center gap-1">
+        <nav
+          aria-label="Sections"
+          className="hidden sm:flex items-center gap-1"
+        >
           <Link href={`/${lang}/docs`} className={linkClass}>
             <svg
               width="15"
@@ -83,8 +89,19 @@ export default function Header({ lang }: { lang: Locale }) {
             </svg>
             Docs
           </Link>
-          <a href={REPO} target="_blank" rel="noopener noreferrer" className={linkClass}>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <a
+            href={REPO}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={linkClass}
+          >
+            <svg
+              width="15"
+              height="15"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              aria-hidden="true"
+            >
               <path d="M12 .5C5.37.5 0 5.78 0 12.29c0 5.2 3.44 9.6 8.21 11.16.6.11.82-.25.82-.57 0-.28-.01-1.02-.02-2-3.34.71-4.04-1.58-4.04-1.58-.55-1.37-1.33-1.74-1.33-1.74-1.09-.73.08-.71.08-.71 1.2.08 1.84 1.21 1.84 1.21 1.07 1.8 2.81 1.28 3.5.98.11-.76.42-1.28.76-1.58-2.67-.3-5.47-1.31-5.47-5.83 0-1.29.47-2.34 1.24-3.17-.13-.3-.54-1.52.11-3.18 0 0 1.01-.32 3.3 1.21a11.6 11.6 0 0 1 6 0c2.29-1.53 3.3-1.21 3.3-1.21.65 1.66.24 2.88.12 3.18.77.83 1.23 1.88 1.23 3.17 0 4.53-2.81 5.53-5.49 5.82.43.37.81 1.1.81 2.22 0 1.6-.01 2.9-.01 3.29 0 .32.21.69.83.57A12.01 12.01 0 0 0 24 12.29C24 5.78 18.63.5 12 .5z" />
             </svg>
             GitHub
@@ -112,16 +129,14 @@ export default function Header({ lang }: { lang: Locale }) {
             <span>{LANGUAGE_NAMES[lang] ?? lang.toUpperCase()}</span>
             <span className="text-[9px] opacity-60">▼</span>
           </button>
-          
+
           {dropdownOpen && (
             <>
-              <div 
-                className="fixed inset-0 z-10" 
-                onClick={() => setDropdownOpen(false)} 
-              />
               <div
-                className="absolute right-0 rtl:left-0 rtl:right-auto z-20 mt-2 w-36 rounded-xl border p-1 shadow-lg transition-all bg-white border-[#e2e8f0] dark:bg-[#0b0d12] dark:border-[#232a36]"
-              >
+                className="fixed inset-0 z-10"
+                onClick={() => setDropdownOpen(false)}
+              />
+              <div className="absolute right-0 rtl:left-0 rtl:right-auto z-20 mt-2 w-36 rounded-xl border p-1 shadow-lg transition-all bg-white border-[#e2e8f0] dark:bg-[#0b0d12] dark:border-[#232a36]">
                 {locales.map((locale) => {
                   const active = locale === lang;
                   return (
@@ -135,7 +150,9 @@ export default function Header({ lang }: { lang: Locale }) {
                           : "text-[#475569] hover:bg-[#f8fafc] hover:text-[#0f172a] dark:text-[#94a3b8] dark:hover:bg-white/[0.04] dark:hover:text-white"
                       }`}
                     >
-                      <span>{LANGUAGE_NAMES[locale] ?? locale.toUpperCase()}</span>
+                      <span>
+                        {LANGUAGE_NAMES[locale] ?? locale.toUpperCase()}
+                      </span>
                       {active && <span className="text-[10px]">✓</span>}
                     </Link>
                   );

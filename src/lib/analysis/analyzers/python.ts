@@ -37,7 +37,10 @@ function resolveModule(
     baseNoExt = specifier.split(".").join("/");
   }
 
-  const candidates = [`${baseNoExt}.py`, path.posix.join(baseNoExt, "__init__.py")];
+  const candidates = [
+    `${baseNoExt}.py`,
+    path.posix.join(baseNoExt, "__init__.py"),
+  ];
   for (const c of candidates) if (paths.has(c)) return c;
   for (const c of candidates) {
     for (const p of paths) if (p === c || p.endsWith("/" + c)) return p;

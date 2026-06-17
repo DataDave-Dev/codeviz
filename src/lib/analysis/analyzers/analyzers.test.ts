@@ -7,8 +7,14 @@ import { rustAnalyzer } from "./rust";
 import { sqlAnalyzer } from "./sql";
 import type { Graph, LanguageAnalyzer, SourceFile } from "../types";
 
-function run(analyzer: LanguageAnalyzer, files: [string, string][]): Promise<Graph> {
-  const sources: SourceFile[] = files.map(([path, content]) => ({ path, content }));
+function run(
+  analyzer: LanguageAnalyzer,
+  files: [string, string][],
+): Promise<Graph> {
+  const sources: SourceFile[] = files.map(([path, content]) => ({
+    path,
+    content,
+  }));
   return analyzer.analyzeProject(sources);
 }
 
@@ -54,7 +60,9 @@ main()
   });
 
   test("ignora llamadas a builtins", async () => {
-    const graph = await run(pythonAnalyzer, [["a.py", "def f():\n    print(len([]))\n"]]);
+    const graph = await run(pythonAnalyzer, [
+      ["a.py", "def f():\n    print(len([]))\n"],
+    ]);
     expect(hasNode(graph, "a.py::f")).toBe(true);
     expect(graph.edges).toEqual([]);
   });
@@ -65,8 +73,12 @@ main()
       ["helpers.py", "def work():\n    pass\n"],
     ]);
 
-    expect(hasEdge(graph, "mod::main.py", "mod::helpers.py", "imports")).toBe(true);
-    expect(hasEdge(graph, "main.py::run", "helpers.py::work", "calls")).toBe(true);
+    expect(hasEdge(graph, "mod::main.py", "mod::helpers.py", "imports")).toBe(
+      true,
+    );
+    expect(hasEdge(graph, "main.py::run", "helpers.py::work", "calls")).toBe(
+      true,
+    );
   });
 
   test("resuelve llamadas en funciones anidadas", async () => {
@@ -86,8 +98,12 @@ def leaf():
 
     expect(hasNode(graph, "nested.py::outer")).toBe(true);
     expect(hasNode(graph, "nested.py::inner")).toBe(true);
-    expect(hasEdge(graph, "nested.py::outer", "nested.py::inner", "calls")).toBe(true);
-    expect(hasEdge(graph, "nested.py::inner", "nested.py::leaf", "calls")).toBe(true);
+    expect(
+      hasEdge(graph, "nested.py::outer", "nested.py::inner", "calls"),
+    ).toBe(true);
+    expect(hasEdge(graph, "nested.py::inner", "nested.py::leaf", "calls")).toBe(
+      true,
+    );
   });
 });
 
@@ -114,12 +130,19 @@ main();
 
   test("resuelve import relativo entre archivos", async () => {
     const graph = await run(javascriptAnalyzer, [
-      ["main.js", 'import { work } from "./helpers";\nfunction run() { work(); }\n'],
+      [
+        "main.js",
+        'import { work } from "./helpers";\nfunction run() { work(); }\n',
+      ],
       ["helpers.js", "export function work() {}\n"],
     ]);
 
-    expect(hasEdge(graph, "mod::main.js", "mod::helpers.js", "imports")).toBe(true);
-    expect(hasEdge(graph, "main.js::run", "helpers.js::work", "calls")).toBe(true);
+    expect(hasEdge(graph, "mod::main.js", "mod::helpers.js", "imports")).toBe(
+      true,
+    );
+    expect(hasEdge(graph, "main.js::run", "helpers.js::work", "calls")).toBe(
+      true,
+    );
   });
 
   test("detecta llamadas dentro de condicionales y loops", async () => {
@@ -142,8 +165,12 @@ function processItem(item) {
       ],
     ]);
 
-    expect(hasEdge(graph, "flow.js::main", "flow.js::helper", "calls")).toBe(true);
-    expect(hasEdge(graph, "flow.js::main", "flow.js::processItem", "calls")).toBe(true);
+    expect(hasEdge(graph, "flow.js::main", "flow.js::helper", "calls")).toBe(
+      true,
+    );
+    expect(
+      hasEdge(graph, "flow.js::main", "flow.js::processItem", "calls"),
+    ).toBe(true);
   });
 });
 
@@ -165,7 +192,9 @@ class Dog(Animal):
 
     expect(hasNode(graph, "class::m.py::Animal")).toBe(true);
     expect(hasNode(graph, "class::m.py::Dog")).toBe(true);
-    expect(hasEdge(graph, "class::m.py::Dog", "class::m.py::Animal", "extends")).toBe(true);
+    expect(
+      hasEdge(graph, "class::m.py::Dog", "class::m.py::Animal", "extends"),
+    ).toBe(true);
     // Method is parented to its class node.
     const breathe = graph.nodes.find((n) => n.id === "m.py::breathe");
     expect(breathe?.parent).toBe("class::m.py::Animal");
@@ -180,7 +209,14 @@ class Dog(Animal):
       ],
     ]);
 
-    expect(hasEdge(graph, "class::widget.js::Widget", "class::base.js::Base", "extends")).toBe(true);
+    expect(
+      hasEdge(
+        graph,
+        "class::widget.js::Widget",
+        "class::base.js::Base",
+        "extends",
+      ),
+    ).toBe(true);
     const render = graph.nodes.find((n) => n.id === "widget.js::render");
     expect(render?.parent).toBe("class::widget.js::Widget");
   });
@@ -221,20 +257,32 @@ class B:
 describe("typescript", () => {
   test("parsea tipos y resuelve imports entre archivos", async () => {
     const graph = await run(typescriptAnalyzer, [
-      ["main.ts", 'import { work } from "./helpers";\nfunction run(): void { work(); }\n'],
+      [
+        "main.ts",
+        'import { work } from "./helpers";\nfunction run(): void { work(); }\n',
+      ],
       ["helpers.ts", "export function work(): number {\n  return 1;\n}\n"],
     ]);
 
-    expect(hasEdge(graph, "mod::main.ts", "mod::helpers.ts", "imports")).toBe(true);
-    expect(hasEdge(graph, "main.ts::run", "helpers.ts::work", "calls")).toBe(true);
+    expect(hasEdge(graph, "mod::main.ts", "mod::helpers.ts", "imports")).toBe(
+      true,
+    );
+    expect(hasEdge(graph, "main.ts::run", "helpers.ts::work", "calls")).toBe(
+      true,
+    );
   });
 
   test("clases tipadas y herencia", async () => {
     const graph = await run(typescriptAnalyzer, [
-      ["w.ts", "class Base {}\nclass Widget extends Base {\n  render(): void {}\n}\n"],
+      [
+        "w.ts",
+        "class Base {}\nclass Widget extends Base {\n  render(): void {}\n}\n",
+      ],
     ]);
 
-    expect(hasEdge(graph, "class::w.ts::Widget", "class::w.ts::Base", "extends")).toBe(true);
+    expect(
+      hasEdge(graph, "class::w.ts::Widget", "class::w.ts::Base", "extends"),
+    ).toBe(true);
     const render = graph.nodes.find((n) => n.id === "w.ts::render");
     expect(render?.parent).toBe("class::w.ts::Widget");
   });
@@ -257,11 +305,15 @@ class Widget {
     ]);
 
     const render = graph.nodes.find((n) => n.id === "widget.ts::render");
-    const formatLabel = graph.nodes.find((n) => n.id === "widget.ts::formatLabel");
+    const formatLabel = graph.nodes.find(
+      (n) => n.id === "widget.ts::formatLabel",
+    );
 
     expect(render?.parent).toBe("class::widget.ts::Widget");
     expect(formatLabel?.parent).toBe("mod::widget.ts");
-    expect(hasEdge(graph, "widget.ts::render", "widget.ts::formatLabel", "calls")).toBe(true);
+    expect(
+      hasEdge(graph, "widget.ts::render", "widget.ts::formatLabel", "calls"),
+    ).toBe(true);
   });
 });
 
@@ -309,7 +361,9 @@ describe("rust", () => {
       ["helpers.rs", "fn help() {}\n"],
     ]);
 
-    expect(hasEdge(graph, "main.rs::run", "helpers.rs::help", "calls")).toBe(true);
+    expect(hasEdge(graph, "main.rs::run", "helpers.rs::help", "calls")).toBe(
+      true,
+    );
   });
 });
 
@@ -348,25 +402,42 @@ CREATE TABLE posts (
       ],
     ]);
 
-    expect(hasEdge(graph, "table::posts", "table::users", "references")).toBe(true);
+    expect(hasEdge(graph, "table::posts", "table::users", "references")).toBe(
+      true,
+    );
     const fk = graph.edges.find((e) => e.source === "table::posts");
     expect(fk?.cardinality).toBe("1:N");
-    expect(graph.nodes.find((n) => n.id === "table::posts")?.columns?.find((c) => c.name === "author_id")?.fk).toBe(true);
+    expect(
+      graph.nodes
+        .find((n) => n.id === "table::posts")
+        ?.columns?.find((c) => c.name === "author_id")?.fk,
+    ).toBe(true);
   });
 
   test("FK via ALTER TABLE entre archivos", async () => {
     const graph = await run(sqlAnalyzer, [
       ["a.sql", "CREATE TABLE users ( id INTEGER PRIMARY KEY );"],
-      ["b.sql", "CREATE TABLE posts ( id INTEGER PRIMARY KEY, author_id INTEGER );"],
-      ["c.sql", "ALTER TABLE posts ADD CONSTRAINT fk FOREIGN KEY (author_id) REFERENCES users (id);"],
+      [
+        "b.sql",
+        "CREATE TABLE posts ( id INTEGER PRIMARY KEY, author_id INTEGER );",
+      ],
+      [
+        "c.sql",
+        "ALTER TABLE posts ADD CONSTRAINT fk FOREIGN KEY (author_id) REFERENCES users (id);",
+      ],
     ]);
 
-    expect(hasEdge(graph, "table::posts", "table::users", "references")).toBe(true);
+    expect(hasEdge(graph, "table::posts", "table::users", "references")).toBe(
+      true,
+    );
   });
 
   test("PRIMARY KEY a nivel de tabla marca la columna", async () => {
     const graph = await run(sqlAnalyzer, [
-      ["schema.sql", "CREATE TABLE users (id INTEGER, email TEXT, PRIMARY KEY (id));"],
+      [
+        "schema.sql",
+        "CREATE TABLE users (id INTEGER, email TEXT, PRIMARY KEY (id));",
+      ],
     ]);
 
     const id = graph.nodes
@@ -378,12 +449,20 @@ CREATE TABLE posts (
 
   test("FK por ALTER resuelve aunque el ALTER se procese antes del CREATE", async () => {
     const graph = await run(sqlAnalyzer, [
-      ["c.sql", "ALTER TABLE posts ADD CONSTRAINT fk FOREIGN KEY (author_id) REFERENCES users (id);"],
-      ["b.sql", "CREATE TABLE posts ( id INTEGER PRIMARY KEY, author_id INTEGER );"],
+      [
+        "c.sql",
+        "ALTER TABLE posts ADD CONSTRAINT fk FOREIGN KEY (author_id) REFERENCES users (id);",
+      ],
+      [
+        "b.sql",
+        "CREATE TABLE posts ( id INTEGER PRIMARY KEY, author_id INTEGER );",
+      ],
       ["a.sql", "CREATE TABLE users ( id INTEGER PRIMARY KEY );"],
     ]);
 
-    expect(hasEdge(graph, "table::posts", "table::users", "references")).toBe(true);
+    expect(hasEdge(graph, "table::posts", "table::users", "references")).toBe(
+      true,
+    );
     const fk = graph.nodes
       .find((n) => n.id === "table::posts")
       ?.columns?.find((c) => c.name === "author_id");
@@ -408,6 +487,9 @@ CREATE TABLE user_roles (
 
     const nm = graph.edges.find((e) => e.cardinality === "N:M");
     expect(nm).toBeDefined();
-    expect([nm?.source, nm?.target].sort()).toEqual(["table::roles", "table::users"]);
+    expect([nm?.source, nm?.target].sort()).toEqual([
+      "table::roles",
+      "table::users",
+    ]);
   });
 });

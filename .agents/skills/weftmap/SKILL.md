@@ -1,4 +1,4 @@
-```markdown
+````markdown
 # weftmap Development Patterns
 
 > Auto-generated skill from repository analysis
@@ -15,8 +15,9 @@ This skill teaches you how to contribute to the `weftmap` codebase, a TypeScript
 - **Import Style:** Relative imports
 
   ```typescript
-  import { analyzeFile } from './analyzeFile';
+  import { analyzeFile } from "./analyzeFile";
   ```
+````
 
 - **Export Style:** Named exports
 
@@ -52,13 +53,14 @@ This skill teaches you how to contribute to the `weftmap` codebase, a TypeScript
    `src/lib/analysis/analyzers/analyzers.test.ts`.
 5. **Update the API route** if necessary:  
    `src/app/api/analyze/route.ts`.
-6. **Update UI components** to reflect new language options, diagrams, or filtering:  
+6. **Update UI components** to reflect new language options, diagrams, or filtering:
    - `src/components/ui/CodeWorkspace.tsx`
    - `src/components/ui/Diagram.tsx`
 7. **Add WASM grammar files** in `public/wasm/` (e.g., `tree-sitter-{language}.wasm`) if needed.
 8. **Update language selector and samples** in the UI.
 
 **Example:**
+
 ```typescript
 // src/lib/analysis/analyzers/go.ts
 export function analyzeGo(source: string) {
@@ -68,8 +70,8 @@ export function analyzeGo(source: string) {
 
 ```typescript
 // src/lib/analysis/registry.ts
-import { analyzeGo } from './analyzers/go';
-registry['go'] = analyzeGo;
+import { analyzeGo } from "./analyzers/go";
+registry["go"] = analyzeGo;
 ```
 
 ### Feature Development with Cross-File Analysis
@@ -84,7 +86,7 @@ registry['go'] = analyzeGo;
    `src/lib/analysis/analyzers/{language}.ts`, `shared.ts`.
 3. **Update the API** to expose the new analysis:  
    `src/app/api/analyze/route.ts`.
-4. **Update UI components** to visualize the new feature:  
+4. **Update UI components** to visualize the new feature:
    - `src/components/ui/Diagram.tsx`
    - `src/components/ui/CodeWorkspace.tsx`
    - `src/components/ui/CodeTool.tsx`
@@ -94,6 +96,7 @@ registry['go'] = analyzeGo;
    `src/lib/analysis/analyzers/analyzers.test.ts`.
 
 **Example:**
+
 ```typescript
 // src/lib/analysis/types.ts
 export interface ClassNode {
@@ -105,7 +108,10 @@ export interface ClassNode {
 
 ```typescript
 // src/lib/analysis/analyzers/typescript.ts
-export function analyzeTypeScript(source: string, files: Record<string, string>) {
+export function analyzeTypeScript(
+  source: string,
+  files: Record<string, string>,
+) {
   // ...cross-file class/method detection logic
 }
 ```
@@ -119,7 +125,7 @@ export function analyzeTypeScript(source: string, files: Record<string, string>)
 1. **Update diagram rendering logic** in  
    `src/components/ui/Diagram.tsx`.
 2. **Update or add legend and filtering features** in the same file.
-3. **Update analysis output or types** if new edge/node types are visualized:  
+3. **Update analysis output or types** if new edge/node types are visualized:
    - `src/lib/analysis/types.ts`
    - relevant analyzers
 4. **Update tests** if diagram output is tested:  
@@ -128,6 +134,7 @@ export function analyzeTypeScript(source: string, files: Record<string, string>)
    `src/i18n/dictionaries/en.json`, `src/i18n/dictionaries/es.json`.
 
 **Example:**
+
 ```typescript
 // src/components/ui/Diagram.tsx
 <Legend items={[{ type: 'inheritance', color: 'blue' }]} />
@@ -142,20 +149,24 @@ export function analyzeTypeScript(source: string, files: Record<string, string>)
   `src/lib/analysis/analyzers/analyzers.test.ts`
 
 **Example:**
+
 ```typescript
 // src/lib/analysis/analyzers/analyzers.test.ts
-import { analyzeTypeScript } from './typescript';
+import { analyzeTypeScript } from "./typescript";
 
-test('detects classes across files', () => {
+test("detects classes across files", () => {
   // ...test logic
 });
 ```
 
 ## Commands
 
-| Command                | Purpose                                                         |
-|------------------------|-----------------------------------------------------------------|
-| /add-language-support  | Add or enhance support for a programming language               |
-| /add-analysis-feature  | Implement a new analysis feature (e.g., cross-file analysis)    |
-| /improve-diagram-ui    | Enhance diagram visualization, layout, or interactivity         |
+| Command               | Purpose                                                      |
+| --------------------- | ------------------------------------------------------------ |
+| /add-language-support | Add or enhance support for a programming language            |
+| /add-analysis-feature | Implement a new analysis feature (e.g., cross-file analysis) |
+| /improve-diagram-ui   | Enhance diagram visualization, layout, or interactivity      |
+
+```
+
 ```

@@ -36,7 +36,9 @@ const tableHeight = (cols: number) => TABLE_HEADER + cols * TABLE_ROW + 4;
 
 // Container node for a module or class: header label + invisible handles so
 // module/class-level edges (imports, top-level calls, extends) can attach.
-function ContainerNode({ data }: NodeProps<{ label: string; kind: "module" | "class" }>) {
+function ContainerNode({
+  data,
+}: NodeProps<{ label: string; kind: "module" | "class" }>) {
   const isClass = data.kind === "class";
   return (
     <div
@@ -62,9 +64,14 @@ function ContainerNode({ data }: NodeProps<{ label: string; kind: "module" | "cl
 }
 
 // Table node for ER / schema diagrams: header + a row per column with PK/FK badges.
-function TableNode({ data }: NodeProps<{ label: string; columns: TableColumn[] }>) {
+function TableNode({
+  data,
+}: NodeProps<{ label: string; columns: TableColumn[] }>) {
   return (
-    <div className="overflow-hidden rounded-xl border border-[#e2e8f0] bg-white shadow-sm dark:border-[#232a36] dark:bg-[#12151c]" style={{ width: TABLE_W }}>
+    <div
+      className="overflow-hidden rounded-xl border border-[#e2e8f0] bg-white shadow-sm dark:border-[#232a36] dark:bg-[#12151c]"
+      style={{ width: TABLE_W }}
+    >
       <div className="border-b border-[#e2e8f0] bg-[#f1f5f9] px-3 py-2 font-mono text-[12px] font-semibold text-[#0f172a] dark:border-[#232a36] dark:bg-[#1a1f29] dark:text-[#e6e9ef]">
         {data.label}
       </div>
@@ -76,11 +83,23 @@ function TableNode({ data }: NodeProps<{ label: string; columns: TableColumn[] }
             style={{ height: TABLE_ROW }}
           >
             <span className="flex w-9 shrink-0 gap-1 font-mono text-[9px] font-semibold">
-              {c.pk && <span className="text-amber-600" title="Primary key">PK</span>}
-              {c.fk && <span className="text-orange-500" title="Foreign key">FK</span>}
+              {c.pk && (
+                <span className="text-amber-600" title="Primary key">
+                  PK
+                </span>
+              )}
+              {c.fk && (
+                <span className="text-orange-500" title="Foreign key">
+                  FK
+                </span>
+              )}
             </span>
-            <span className="flex-1 truncate font-mono text-[#0f172a] dark:text-[#e6e9ef]">{c.name}</span>
-            <span className="shrink-0 truncate font-mono text-[10px] text-[#94a3b8]">{c.type}</span>
+            <span className="flex-1 truncate font-mono text-[#0f172a] dark:text-[#e6e9ef]">
+              {c.name}
+            </span>
+            <span className="shrink-0 truncate font-mono text-[10px] text-[#94a3b8]">
+              {c.type}
+            </span>
           </div>
         ))}
       </div>
@@ -295,7 +314,11 @@ function layout(graph: Graph, dark: boolean): Layout {
     data: { kind: e.kind },
     animated: e.kind === "calls",
     label: e.kind === "references" ? e.cardinality : undefined,
-    labelStyle: { fill: REF_COLOR, fontSize: 10, fontFamily: "ui-monospace, monospace" },
+    labelStyle: {
+      fill: REF_COLOR,
+      fontSize: 10,
+      fontFamily: "ui-monospace, monospace",
+    },
     labelBgStyle: { fill: "#ffffff" },
     markerEnd: { type: MarkerType.ArrowClosed, color: edgeColor(e.kind) },
     style: {
@@ -328,7 +351,9 @@ export default function Diagram({
 
   const legend = useMemo(() => {
     const present = new Set(graph.edges.map((e) => e.kind));
-    return LEGEND.filter((l) => present.has(l.label as Graph["edges"][number]["kind"]));
+    return LEGEND.filter((l) =>
+      present.has(l.label as Graph["edges"][number]["kind"]),
+    );
   }, [graph]);
 
   const shownEdges = useMemo(
@@ -361,7 +386,10 @@ export default function Diagram({
       minZoom={0.1}
       proOptions={{ hideAttribution: true }}
     >
-      <Background color={dark ? "rgba(255,255,255,0.06)" : "rgba(15,23,42,0.07)"} gap={20} />
+      <Background
+        color={dark ? "rgba(255,255,255,0.06)" : "rgba(15,23,42,0.07)"}
+        gap={20}
+      />
       <Controls showInteractive={false} />
       <Panel
         position="top-left"
@@ -375,7 +403,9 @@ export default function Diagram({
               onClick={() => toggle(l.label)}
               aria-pressed={!off}
               className={`flex items-center gap-1.5 rounded-md px-2 py-1 transition-colors hover:bg-[#f1f5f9] dark:hover:bg-[#1a1f29] ${
-                off ? "opacity-35 line-through" : "text-[#475569] dark:text-[#9aa6b8]"
+                off
+                  ? "opacity-35 line-through"
+                  : "text-[#475569] dark:text-[#9aa6b8]"
               }`}
             >
               <span

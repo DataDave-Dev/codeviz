@@ -38,6 +38,7 @@ This is the most valuable kind of contribution. The steps are in the
 
 We welcome translations to make Weftmap accessible worldwide!
 To add a translation:
+
 1. Register the new locale code (e.g., `fr`) in [src/i18n/config.ts](file:///src/i18n/config.ts).
 2. Copy [src/i18n/dictionaries/en.json](file:///src/i18n/dictionaries/en.json) to `src/i18n/dictionaries/<locale>.json` and translate the values.
 3. Run `pnpm test` to verify the translation dictionary matches the source template keys.

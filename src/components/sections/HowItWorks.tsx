@@ -41,7 +41,10 @@ export default function HowItWorks({
   steps: Step[];
 }) {
   return (
-    <section id="how" className="mx-auto w-full max-w-[1100px] px-6 py-24 max-[620px]:py-16">
+    <section
+      id="how"
+      className="mx-auto w-full max-w-[1100px] px-6 py-24 max-[620px]:py-16"
+    >
       <SectionHeading index="02" title={heading} />
 
       {/* Hairline grid: gap-px over a bordered container draws crisp rules between cells. */}
@@ -59,7 +62,9 @@ export default function HowItWorks({
                 {ICONS[i]}
               </span>
             </div>
-            <h3 className="mt-7 text-lg font-semibold text-[#0f172a] dark:text-[#e6e9ef]">{step.title}</h3>
+            <h3 className="mt-7 text-lg font-semibold text-[#0f172a] dark:text-[#e6e9ef]">
+              {step.title}
+            </h3>
             <p className="mt-2 text-[15px] leading-[1.65] text-[#475569] dark:text-[#9aa6b8]">
               {step.desc}
             </p>

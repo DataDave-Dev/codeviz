@@ -25,6 +25,6 @@ describe("i18n dictionaries validation", () => {
     (locale) => {
       const localeKeys = getKeys(getDictionary(locale));
       expect(localeKeys).toEqual(enKeys);
-    }
+    },
   );
 });

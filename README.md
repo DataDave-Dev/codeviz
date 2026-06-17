@@ -43,7 +43,7 @@ lines. No existing free tool does this well across several languages at once.
 - **Interactive diagram** — pan, zoom and drag nodes (React Flow + dagre layout).
 - **Internal call graph** — shows calls between functions defined in your code;
   calls to builtins/libraries are filtered out to keep the graph meaningful.
-- **No build step for the user** — paste a snippet and hit *Analyze*.
+- **No build step for the user** — paste a snippet and hit _Analyze_.
 
 ## How it works
 
@@ -67,15 +67,15 @@ easier to maintain, and the same approach works for every language.
 
 ## Tech stack
 
-| Layer | Choice | Why |
-|-------|--------|-----|
-| Framework | Next.js (App Router) | Frontend + backend in one project and one deploy |
-| Language | TypeScript | Type safety across the whole stack |
-| Parsing | Tree-sitter via `web-tree-sitter` (WASM) | One API for ~40 languages |
-| Grammars | `tree-sitter-wasms` | Prebuilt grammar binaries |
-| Diagram | React Flow + dagre | Interactive nodes, hierarchical layout |
-| Tests | Vitest | Fast unit tests for the analyzers |
-| Package manager | pnpm | Fast, disk-efficient installs |
+| Layer           | Choice                                   | Why                                              |
+| --------------- | ---------------------------------------- | ------------------------------------------------ |
+| Framework       | Next.js (App Router)                     | Frontend + backend in one project and one deploy |
+| Language        | TypeScript                               | Type safety across the whole stack               |
+| Parsing         | Tree-sitter via `web-tree-sitter` (WASM) | One API for ~40 languages                        |
+| Grammars        | `tree-sitter-wasms`                      | Prebuilt grammar binaries                        |
+| Diagram         | React Flow + dagre                       | Interactive nodes, hierarchical layout           |
+| Tests           | Vitest                                   | Fast unit tests for the analyzers                |
+| Package manager | pnpm                                     | Fast, disk-efficient installs                    |
 
 ## Getting started
 
@@ -94,18 +94,18 @@ Paste a snippet, choose **python** or **javascript**, and click **Analyze**.
 
 ## Available scripts
 
-| Command | What it does |
-|---------|--------------|
-| `pnpm dev` | Start the development server |
-| `pnpm build` | Production build |
-| `pnpm start` | Run the production build |
-| `pnpm test` | Run the analyzer tests (Vitest) |
-| `pnpm typecheck` | Type-check with `tsc --noEmit` |
-| `pnpm lint` | Lint with ESLint |
+| Command          | What it does                    |
+| ---------------- | ------------------------------- |
+| `pnpm dev`       | Start the development server    |
+| `pnpm build`     | Production build                |
+| `pnpm start`     | Run the production build        |
+| `pnpm test`      | Run the analyzer tests (Vitest) |
+| `pnpm typecheck` | Type-check with `tsc --noEmit`  |
+| `pnpm lint`      | Lint with ESLint                |
 
 ## Adding a language
 
-This is the most valuable kind of contribution. The architecture is *pluggable*:
+This is the most valuable kind of contribution. The architecture is _pluggable_:
 the backend adapts the analysis per language, and nothing else needs to change.
 
 1. **Add the grammar.** Copy `tree-sitter-<lang>.wasm` into `public/wasm/`

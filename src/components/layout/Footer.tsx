@@ -42,7 +42,12 @@ function FooterLink({
   );
   if (external) {
     return (
-      <a href={href} target="_blank" rel="noopener noreferrer" className={className}>
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={className}
+      >
         {inner}
       </a>
     );
@@ -66,7 +71,6 @@ export default function Footer({
   const t = getDictionary(lang);
   return (
     <footer className="relative isolate overflow-hidden bg-[#f6f7f9] dark:bg-[#0b0d12]">
-
       <div className="mx-auto grid max-w-[1200px] grid-cols-2 gap-x-8 gap-y-12 px-6 pb-44 pt-20 md:grid-cols-[1.7fr_1fr_1fr]">
         {/* Brand */}
         <div className="col-span-2 max-w-sm md:col-span-1">
@@ -77,7 +81,9 @@ export default function Footer({
             <Logo className="h-7 w-7 text-[#0f172a] dark:text-[#e6e9ef]" />
             <span>Weftmap</span>
           </Link>
-          <p className="mt-5 text-sm leading-relaxed text-[#475569] dark:text-[#9aa6b8]">{tagline}</p>
+          <p className="mt-5 text-sm leading-relaxed text-[#475569] dark:text-[#9aa6b8]">
+            {tagline}
+          </p>
           <a
             href={REPO}
             target="_blank"
@@ -85,7 +91,13 @@ export default function Footer({
             aria-label="GitHub repository"
             className="mt-7 inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#e2e8f0] dark:border-[#232a36] bg-white dark:bg-[#12151c] text-[#475569] dark:text-[#9aa6b8] transition-all hover:-translate-y-0.5 hover:border-[#c7d2fe] hover:text-[#4f46e5]"
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              aria-hidden="true"
+            >
               <path d="M12 .5C5.37.5 0 5.78 0 12.29c0 5.2 3.44 9.6 8.21 11.16.6.11.82-.25.82-.57 0-.28-.01-1.02-.02-2-3.34.71-4.04-1.58-4.04-1.58-.55-1.37-1.33-1.74-1.33-1.74-1.09-.73.08-.71.08-.71 1.2.08 1.84 1.21 1.84 1.21 1.07 1.8 2.81 1.28 3.5.98.11-.76.42-1.28.76-1.58-2.67-.3-5.47-1.31-5.47-5.83 0-1.29.47-2.34 1.24-3.17-.13-.3-.54-1.52.11-3.18 0 0 1.01-.32 3.3 1.21a11.6 11.6 0 0 1 6 0c2.29-1.53 3.3-1.21 3.3-1.21.65 1.66.24 2.88.12 3.18.77.83 1.23 1.88 1.23 3.17 0 4.53-2.81 5.53-5.49 5.82.43.37.81 1.1.81 2.22 0 1.6-.01 2.9-.01 3.29 0 .32.21.69.83.57A12.01 12.01 0 0 0 24 12.29C24 5.78 18.63.5 12 .5z" />
             </svg>
           </a>

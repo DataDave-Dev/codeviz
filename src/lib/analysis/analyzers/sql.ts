@@ -81,7 +81,11 @@ type Ctx = {
   unique: Map<string, Set<string>>;
 };
 
-function addCols(map: Map<string, Set<string>>, key: string, cols: string[]): void {
+function addCols(
+  map: Map<string, Set<string>>,
+  key: string,
+  cols: string[],
+): void {
   let set = map.get(key);
   if (!set) map.set(key, (set = new Set()));
   for (const c of cols) set.add(c);
@@ -92,7 +96,12 @@ function readConstraint(node: Node, tableKey: string, ctx: Ctx): void {
   const cols = orderedColumns(childOfType(node, "ordered_columns"));
   if (hasChildType(node, "keyword_foreign")) {
     const toTable = refName(childOfType(node, "object_reference"));
-    if (toTable) ctx.fks.push({ fromTable: tableKey, fromCols: cols, toTable: norm(toTable) });
+    if (toTable)
+      ctx.fks.push({
+        fromTable: tableKey,
+        fromCols: cols,
+        toTable: norm(toTable),
+      });
   } else if (hasChildType(node, "keyword_primary")) {
     addCols(ctx.pk, tableKey, cols);
   } else if (hasChildType(node, "keyword_unique")) {
@@ -105,7 +114,8 @@ function readColumn(node: Node, table: Table, ctx: Ctx): void {
   if (!nameNode) return;
   const name = norm(nameNode.text);
   const pk = hasChildType(node, "keyword_primary");
-  const notNull = hasChildType(node, "keyword_not") && hasChildType(node, "keyword_null");
+  const notNull =
+    hasChildType(node, "keyword_not") && hasChildType(node, "keyword_null");
   const unique = hasChildType(node, "keyword_unique");
   const isFk = hasChildType(node, "keyword_references");
 
@@ -122,7 +132,12 @@ function readColumn(node: Node, table: Table, ctx: Ctx): void {
 
   if (isFk) {
     const toTable = refName(childOfType(node, "object_reference"));
-    if (toTable) ctx.fks.push({ fromTable: table.key, fromCols: [name], toTable: norm(toTable) });
+    if (toTable)
+      ctx.fks.push({
+        fromTable: table.key,
+        fromCols: [name],
+        toTable: norm(toTable),
+      });
   }
 }
 
@@ -130,9 +145,12 @@ function readCreateTable(node: Node, ctx: Ctx): void {
   const rawName = refName(childOfType(node, "object_reference"));
   if (!rawName) return;
   const key = norm(rawName);
-  const table: Table =
-    ctx.tables.get(key) ??
-    { key, label: rawName.replace(/^"(.*)"$/, "$1"), columns: new Map(), pk: new Set() };
+  const table: Table = ctx.tables.get(key) ?? {
+    key,
+    label: rawName.replace(/^"(.*)"$/, "$1"),
+    columns: new Map(),
+    pk: new Set(),
+  };
   ctx.tables.set(key, table);
 
   const defs = childOfType(node, "column_definitions");
@@ -217,7 +235,12 @@ async function analyzeProject(files: SourceFile[]): Promise<Graph> {
   const { parser } = await getParser(WASM);
   parser.setTimeoutMicros(MAX_PARSE_MICROS);
 
-  const ctx: Ctx = { tables: new Map(), fks: [], pk: new Map(), unique: new Map() };
+  const ctx: Ctx = {
+    tables: new Map(),
+    fks: [],
+    pk: new Map(),
+    unique: new Map(),
+  };
   const { tables, fks } = ctx;
 
   for (const file of files) {

@@ -10,7 +10,9 @@ export default function SectionHeading({
 }) {
   const dark = tone === "dark";
   return (
-    <div className={`border-t pt-6 ${dark ? "border-white/10" : "border-[#e2e8f0] dark:border-[#232a36]"}`}>
+    <div
+      className={`border-t pt-6 ${dark ? "border-white/10" : "border-[#e2e8f0] dark:border-[#232a36]"}`}
+    >
       <span
         className={`block font-mono text-[12px] tracking-[0.28em] ${
           dark ? "text-white/50" : "text-[#94a3b8]"
