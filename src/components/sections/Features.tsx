@@ -75,7 +75,7 @@ export default function Features({
   return (
     <section
       id="about"
-      className="max-w-[1200px] mx-auto px-6 pt-28 pb-[136px] max-[620px]:pt-16 max-[620px]:pb-[88px]"
+      className="mx-auto flex min-h-screen max-w-[1200px] flex-col justify-center px-6 pt-28 pb-[136px] max-[620px]:pt-16 max-[620px]:pb-[88px]"
     >
       <h2 className="text-[clamp(1.9rem,3.2vw,2.75rem)] font-bold tracking-[-0.01em] text-center mb-14">
         {heading}

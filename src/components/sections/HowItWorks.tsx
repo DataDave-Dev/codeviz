@@ -42,12 +42,12 @@ export default function HowItWorks({
   return (
     <section
       id="how"
-      className="relative isolate overflow-hidden border-y border-white/[0.07] bg-[#0c0e14]"
+      className="relative isolate flex min-h-screen items-center overflow-hidden border-y border-white/[0.07] bg-[#0c0e14]"
     >
       {/* Soft glow keeps the band from reading as a flat fill. */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute left-1/2 top-0 -z-10 h-72 w-[60%] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(198,206,219,0.10),transparent)] blur-3xl"
+        className="pointer-events-none absolute left-1/2 top-0 -z-10 h-80 w-[72%] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(198,206,219,0.20),transparent)] blur-3xl"
       />
 
       <div className="relative mx-auto max-w-[1100px] px-6 py-28 max-[620px]:py-16">
