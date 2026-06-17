@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 
 export function H1({ children }: { children: ReactNode }) {
   return (
-    <h1 className="text-[2rem] font-bold leading-tight tracking-[-0.02em] text-[#0f172a]">
+    <h1 className="text-[2.5rem] font-bold leading-[1.1] tracking-[-0.025em] text-[#0f172a]">
       {children}
     </h1>
   );
