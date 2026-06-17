@@ -62,7 +62,7 @@ export default function HowItWorks({
               className="js-reveal group flex flex-col bg-[#0c0e14] p-8 transition-colors duration-300 hover:bg-[#12151c]"
             >
               <div className="flex items-center justify-between">
-                <span className="font-mono text-2xl tracking-tight text-muted/45 transition-colors group-hover:text-muted/80">
+                <span className="font-mono text-2xl tracking-tight text-muted/45 transition-colors group-hover:text-accent">
                   {`0${i + 1}`}
                 </span>
                 <span className="flex h-10 w-10 items-center justify-center rounded-lg border border-white/12 bg-white/[0.03] text-[#e6e9ef] transition-colors group-hover:border-white/30">

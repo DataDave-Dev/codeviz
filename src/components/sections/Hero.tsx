@@ -79,7 +79,7 @@ export default function Hero({
               01
             </span>
             <span className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.18em] text-[#cbd5e1]">
-              <span className="h-[6px] w-[6px] rounded-full bg-[#e6e9ef] shadow-[0_0_10px_rgba(255,255,255,0.8)]" />
+              <span className="h-[6px] w-[6px] rounded-full bg-accent shadow-[0_0_12px_rgba(52,211,153,0.7)]" />
               {badge}
             </span>
           </div>

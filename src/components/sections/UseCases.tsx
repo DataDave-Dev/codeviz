@@ -26,7 +26,7 @@ export default function UseCases({ title, items }: Props) {
               key={item.title}
               className="group flex flex-col bg-[#0c0e14] p-8 transition-colors duration-300 hover:bg-[#12151c]"
             >
-              <span className="font-mono text-2xl tracking-tight text-muted/45 transition-colors group-hover:text-muted/80">
+              <span className="font-mono text-2xl tracking-tight text-muted/45 transition-colors group-hover:text-accent">
                 {`0${i + 1}`}
               </span>
               <h3 className="mt-6 text-lg font-semibold">{item.title}</h3>

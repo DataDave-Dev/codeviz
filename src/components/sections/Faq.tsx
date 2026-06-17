@@ -22,7 +22,7 @@ export default function Faq({ title, items }: Props) {
               {item.q}
               <span
                 aria-hidden="true"
-                className="font-mono text-lg text-muted/60 transition-transform duration-200 group-open:rotate-45"
+                className="font-mono text-lg text-muted/60 transition-all duration-200 group-open:rotate-45 group-open:text-accent"
               >
                 +
               </span>

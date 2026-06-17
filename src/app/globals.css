@@ -4,6 +4,9 @@
   --color-fg: #e6e9ef;
   --color-muted: #94a3b8;
   --color-surface: #13151b;
+  /* Single semantic accent: "run / live" — used only for interactive and
+     execution-related cues, never for body text or headings. */
+  --color-accent: #34d399;
 }
 
 @layer base {
@@ -14,6 +17,17 @@
     font-family: "Lexend Variable", system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Consistent, accessible focus ring across interactive elements. */
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  /* Tabular figures for mono numerals so indices/counters don't jitter. */
+  .font-mono {
+    font-variant-numeric: tabular-nums;
   }
 }
 
@@ -121,7 +135,7 @@
 /* ---- Call-graph edges ---- */
 .edge-flow {
   fill: none;
-  stroke: rgba(255, 255, 255, 0.35);
+  stroke: color-mix(in oklab, var(--color-accent) 65%, transparent);
   stroke-width: 1.5;
   stroke-dasharray: 4 5;
   animation: flow 0.9s linear infinite;
