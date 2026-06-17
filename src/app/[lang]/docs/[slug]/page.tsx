@@ -40,7 +40,7 @@ export default async function DocPage({
     <article>
       <Content lang={lang} />
 
-      <nav className="mt-16 grid grid-cols-2 gap-4 border-t border-[#e2e8f0] pt-8">
+      <nav className="mt-16 grid grid-cols-1 gap-4 border-t border-[#e2e8f0] pt-8 sm:grid-cols-2">
         {prev ? (
           <Link
             href={`/${lang}/docs/${prev.slug}`}

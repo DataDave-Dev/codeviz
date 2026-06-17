@@ -89,14 +89,12 @@ export default function Features({
             <article
               key={feature.title}
               onMouseMove={trackPointer}
-              className={`js-reveal rounded-2xl border border-[#e2e8f0] bg-white px-[30px] py-[34px] shadow-[0_1px_3px_rgba(15,23,42,0.06)] transition-all hover:-translate-y-[3px] hover:shadow-[0_12px_30px_-12px_rgba(15,23,42,0.18)] ${
-                big ? "flex flex-col" : ""
-              } ${wide ? tile.span : ""}`}
+              className={`js-reveal rounded-2xl border border-[#e2e8f0] bg-white px-[30px] py-[34px] shadow-[0_1px_3px_rgba(15,23,42,0.06)] transition-all hover:-translate-y-[3px] hover:shadow-[0_12px_30px_-12px_rgba(15,23,42,0.18)] ${big ? "flex flex-col" : ""
+                } ${wide ? tile.span : ""}`}
             >
               <span
-                className={`inline-flex items-center justify-center rounded-xl border border-[#e2e8f0] bg-[#f1f5f9] text-[#4f46e5] mb-[18px] ${
-                  big ? "w-[52px] h-[52px]" : "w-11 h-11"
-                }`}
+                className={`inline-flex items-center justify-center rounded-xl border border-[#e2e8f0] bg-[#f1f5f9] text-[#4f46e5] mb-[18px] ${big ? "w-[52px] h-[52px]" : "w-11 h-11"
+                  }`}
               >
                 {ICONS[i]}
               </span>

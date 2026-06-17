@@ -5,14 +5,22 @@ import { usePathname } from "next/navigation";
 import type { Locale } from "@/i18n/config";
 import { DOC_NAV } from "@/lib/docs";
 
-export default function DocsSidebar({ lang }: { lang: Locale }) {
+export default function DocsSidebar({
+  lang,
+  showHeading = true,
+}: {
+  lang: Locale;
+  showHeading?: boolean;
+}) {
   const pathname = usePathname();
 
   return (
     <nav aria-label="Docs">
-      <p className="mb-4 font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-[#94a3b8]">
-        {lang === "es" ? "Documentación" : "Documentation"}
-      </p>
+      {showHeading && (
+        <p className="mb-4 font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-[#94a3b8]">
+          {lang === "es" ? "Documentación" : "Documentation"}
+        </p>
+      )}
       <div className="flex flex-col border-l border-[#e2e8f0]">
         {DOC_NAV.map((d) => {
           const href = `/${lang}/docs/${d.slug}`;

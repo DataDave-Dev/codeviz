@@ -1,7 +1,6 @@
 import type { ReactNode } from "react";
 import { notFound } from "next/navigation";
 import { isLocale, locales, type Locale } from "@/i18n/config";
-import Header from "@/components/layout/Header";
 import DocsSidebar from "@/components/docs/DocsSidebar";
 
 export function generateStaticParams() {
@@ -19,16 +18,25 @@ export default async function DocsLayout({
   if (!isLocale(lang)) notFound();
 
   return (
-    <>
-      <Header lang={lang as Locale} variant="light" />
-      <div className="mx-auto grid max-w-[1180px] gap-10 px-6 py-12 lg:grid-cols-[240px_1fr] lg:gap-16 lg:py-20">
+    <div className="mx-auto grid max-w-[1180px] gap-10 px-6 py-12 lg:grid-cols-[240px_1fr] lg:gap-16 lg:py-20">
+        {/* Mobile docs nav (sidebar is hidden below lg). */}
+        <details className="group mb-2 rounded-xl border border-[#e2e8f0] bg-white lg:hidden">
+          <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-3 text-sm font-medium text-[#0f172a] [&::-webkit-details-marker]:hidden">
+            {lang === "es" ? "Documentación" : "Documentation"}
+            <span aria-hidden="true" className="font-mono text-[#94a3b8] transition-transform group-open:rotate-180">
+              ▾
+            </span>
+          </summary>
+          <div className="border-t border-[#e2e8f0] px-4 py-3">
+            <DocsSidebar lang={lang as Locale} showHeading={false} />
+          </div>
+        </details>
         <aside className="hidden lg:block">
           <div className="sticky top-[96px]">
             <DocsSidebar lang={lang as Locale} />
           </div>
         </aside>
         <main className="min-w-0 max-w-[740px]">{children}</main>
-      </div>
-    </>
+    </div>
   );
 }

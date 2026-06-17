@@ -40,13 +40,13 @@ export default function Header({
 
   return (
     <header
-      className={`sticky top-0 z-50 flex items-center justify-between px-6 py-4 border-b transition-colors duration-300 ${
+      className={`sticky top-0 z-50 flex items-center justify-between gap-3 px-4 py-3.5 sm:px-6 sm:py-4 border-b transition-colors duration-300 ${
         scrolled ? scrolledBar : "bg-transparent border-transparent"
       }`}
     >
       <Link
         href={`/${lang}`}
-        className="flex items-center gap-2 text-xl font-bold tracking-[0.02em]"
+        className="flex shrink-0 items-center gap-2 text-xl font-bold tracking-[0.02em]"
       >
         <Logo className={light ? "h-6 w-6 text-[#0f172a]" : "h-6 w-6 text-fg"} />
         <span className={light ? "text-[#0f172a]" : "metallic"}>Weftmap</span>
@@ -83,8 +83,8 @@ export default function Header({
           href={`/${lang}/app`}
           className={
             light
-              ? "rounded-full bg-[#4f46e5] px-4 py-1.5 text-[13px] font-semibold text-white transition hover:-translate-y-px hover:bg-[#4338ca]"
-              : "metallic-fill rounded-full px-4 py-1.5 text-[13px] font-semibold transition hover:-translate-y-px focus-visible:outline focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-[3px]"
+              ? "shrink-0 whitespace-nowrap rounded-full bg-[#4f46e5] px-3.5 py-1.5 text-[13px] font-semibold text-white transition hover:-translate-y-px hover:bg-[#4338ca] sm:px-4"
+              : "shrink-0 whitespace-nowrap metallic-fill rounded-full px-3.5 py-1.5 text-[13px] font-semibold transition hover:-translate-y-px focus-visible:outline focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-[3px] sm:px-4"
           }
         >
           {t.getStarted}
@@ -92,7 +92,7 @@ export default function Header({
 
         <nav
           aria-label="Language"
-          className={`inline-flex gap-0.5 p-[3px] rounded-full border ${
+          className={`inline-flex shrink-0 gap-0.5 p-[3px] rounded-full border ${
             light
               ? "bg-black/[0.04] border-[#e2e8f0]"
               : "bg-white/[0.08] border-white/[0.14]"
