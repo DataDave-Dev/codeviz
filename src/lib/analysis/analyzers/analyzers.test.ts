@@ -4,6 +4,7 @@ import { javascriptAnalyzer } from "./javascript";
 import { typescriptAnalyzer } from "./typescript";
 import { goAnalyzer } from "./go";
 import { rustAnalyzer } from "./rust";
+import { sqlAnalyzer } from "./sql";
 import type { Graph, LanguageAnalyzer, SourceFile } from "../types";
 
 function run(analyzer: LanguageAnalyzer, files: [string, string][]): Promise<Graph> {
@@ -276,6 +277,8 @@ describe("archivos sin funciones", () => {
     [goAnalyzer, "values.go", "package main\n\nvar answer = 42\n"],
     [rustAnalyzer, "empty.rs", ""],
     [rustAnalyzer, "values.rs", "const ANSWER: i32 = 42;\n"],
+    [sqlAnalyzer, "empty.sql", ""],
+    [sqlAnalyzer, "comment.sql", "-- just a comment\n"],
   ] satisfies [LanguageAnalyzer, string, string][])(
     "devuelve grafo vacio para %s",
     async (analyzer, path, content) => {
@@ -307,5 +310,78 @@ describe("rust", () => {
     ]);
 
     expect(hasEdge(graph, "main.rs::run", "helpers.rs::help", "calls")).toBe(true);
+  });
+});
+
+describe("sql", () => {
+  test("tablas con columnas, PK y tipos", async () => {
+    const graph = await run(sqlAnalyzer, [
+      [
+        "schema.sql",
+        `CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  email VARCHAR(255) NOT NULL UNIQUE
+);`,
+      ],
+    ]);
+
+    expect(hasNode(graph, "table::users")).toBe(true);
+    const users = graph.nodes.find((n) => n.id === "table::users");
+    expect(users?.type).toBe("table");
+    expect(users?.columns?.map((c) => c.name)).toEqual(["id", "email"]);
+    const id = users?.columns?.find((c) => c.name === "id");
+    expect(id?.pk).toBe(true);
+    const email = users?.columns?.find((c) => c.name === "email");
+    expect(email?.unique).toBe(true);
+    expect(email?.nullable).toBe(false);
+  });
+
+  test("FK inline produce arista references 1:N", async () => {
+    const graph = await run(sqlAnalyzer, [
+      [
+        "schema.sql",
+        `CREATE TABLE users ( id INTEGER PRIMARY KEY );
+CREATE TABLE posts (
+  id INTEGER PRIMARY KEY,
+  author_id INTEGER NOT NULL REFERENCES users(id)
+);`,
+      ],
+    ]);
+
+    expect(hasEdge(graph, "table::posts", "table::users", "references")).toBe(true);
+    const fk = graph.edges.find((e) => e.source === "table::posts");
+    expect(fk?.cardinality).toBe("1:N");
+    expect(graph.nodes.find((n) => n.id === "table::posts")?.columns?.find((c) => c.name === "author_id")?.fk).toBe(true);
+  });
+
+  test("FK via ALTER TABLE entre archivos", async () => {
+    const graph = await run(sqlAnalyzer, [
+      ["a.sql", "CREATE TABLE users ( id INTEGER PRIMARY KEY );"],
+      ["b.sql", "CREATE TABLE posts ( id INTEGER PRIMARY KEY, author_id INTEGER );"],
+      ["c.sql", "ALTER TABLE posts ADD CONSTRAINT fk FOREIGN KEY (author_id) REFERENCES users (id);"],
+    ]);
+
+    expect(hasEdge(graph, "table::posts", "table::users", "references")).toBe(true);
+  });
+
+  test("tabla puente infiere relacion N:M", async () => {
+    const graph = await run(sqlAnalyzer, [
+      [
+        "schema.sql",
+        `CREATE TABLE users ( id INTEGER PRIMARY KEY );
+CREATE TABLE roles ( id INTEGER PRIMARY KEY );
+CREATE TABLE user_roles (
+  user_id INTEGER NOT NULL,
+  role_id INTEGER NOT NULL,
+  PRIMARY KEY (user_id, role_id),
+  FOREIGN KEY (user_id) REFERENCES users (id),
+  FOREIGN KEY (role_id) REFERENCES roles (id)
+);`,
+      ],
+    ]);
+
+    const nm = graph.edges.find((e) => e.cardinality === "N:M");
+    expect(nm).toBeDefined();
+    expect([nm?.source, nm?.target].sort()).toEqual(["table::roles", "table::users"]);
   });
 });

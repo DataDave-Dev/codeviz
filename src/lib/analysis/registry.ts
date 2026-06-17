@@ -4,6 +4,7 @@ import { javascriptAnalyzer } from "./analyzers/javascript";
 import { typescriptAnalyzer } from "./analyzers/typescript";
 import { goAnalyzer } from "./analyzers/go";
 import { rustAnalyzer } from "./analyzers/rust";
+import { sqlAnalyzer } from "./analyzers/sql";
 
 const analyzers: LanguageAnalyzer[] = [
   pythonAnalyzer,
@@ -11,6 +12,7 @@ const analyzers: LanguageAnalyzer[] = [
   typescriptAnalyzer,
   goAnalyzer,
   rustAnalyzer,
+  sqlAnalyzer,
 ];
 
 const registry = new Map(analyzers.map((a) => [a.language, a]));
