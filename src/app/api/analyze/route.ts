@@ -14,6 +14,7 @@ const EXT: Record<string, string> = {
   typescript: "ts",
   go: "go",
   rust: "rs",
+  sql: "sql",
 };
 
 function normalizePath(p: string): string {

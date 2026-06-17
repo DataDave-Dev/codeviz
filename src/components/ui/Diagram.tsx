@@ -14,16 +14,24 @@ import ReactFlow, {
 } from "reactflow";
 import dagre from "@dagrejs/dagre";
 import "reactflow/dist/style.css";
-import type { Graph, GraphNode } from "@/lib/analysis/types";
+import type { Graph, GraphNode, TableColumn } from "@/lib/analysis/types";
 
 const NODE_W = 156;
 const NODE_H = 40;
 const HEADER = 30;
 const PAD = 16;
 
+// Table (ER) node dimensions.
+const TABLE_W = 232;
+const TABLE_HEADER = 34;
+const TABLE_ROW = 24;
+
 const CALL_COLOR = "rgba(255,255,255,0.32)";
 const IMPORT_COLOR = "#5eead4";
 const EXTENDS_COLOR = "#c4b5fd";
+const REF_COLOR = "#fdba74";
+
+const tableHeight = (cols: number) => TABLE_HEADER + cols * TABLE_ROW + 4;
 
 // Container node for a module or class: header label + invisible handles so
 // module/class-level edges (imports, top-level calls, extends) can attach.
@@ -50,7 +58,36 @@ function ContainerNode({ data }: NodeProps<{ label: string; kind: "module" | "cl
   );
 }
 
-const nodeTypes = { container: ContainerNode };
+// Table node for ER / schema diagrams: header + a row per column with PK/FK badges.
+function TableNode({ data }: NodeProps<{ label: string; columns: TableColumn[] }>) {
+  return (
+    <div className="overflow-hidden rounded-xl border border-white/15 bg-[#13151b]" style={{ width: TABLE_W }}>
+      <div className="border-b border-white/10 bg-white/[0.05] px-3 py-2 font-mono text-[12px] font-semibold text-fg">
+        {data.label}
+      </div>
+      <div>
+        {data.columns.map((c) => (
+          <div
+            key={c.name}
+            className="flex items-center gap-2 border-b border-white/[0.05] px-3 text-[11px] last:border-0"
+            style={{ height: TABLE_ROW }}
+          >
+            <span className="flex w-9 shrink-0 gap-1 font-mono text-[9px] font-semibold">
+              {c.pk && <span className="text-amber-300" title="Primary key">PK</span>}
+              {c.fk && <span className="text-orange-300" title="Foreign key">FK</span>}
+            </span>
+            <span className="flex-1 truncate font-mono text-fg">{c.name}</span>
+            <span className="shrink-0 truncate font-mono text-[10px] text-muted/70">{c.type}</span>
+          </div>
+        ))}
+      </div>
+      <Handle type="target" position={Position.Left} className="!opacity-0" />
+      <Handle type="source" position={Position.Right} className="!opacity-0" />
+    </div>
+  );
+}
+
+const nodeTypes = { container: ContainerNode, table: TableNode };
 
 const fnStyle = {
   width: NODE_W,
@@ -136,7 +173,14 @@ function layout(graph: Graph): Layout {
     return { w: maxX + PAD, h: maxY + PAD };
   }
 
-  for (const m of roots) sizeById.set(m.id, sizeOf(m.id));
+  for (const m of roots) {
+    sizeById.set(
+      m.id,
+      m.type === "table"
+        ? { w: TABLE_W, h: tableHeight(m.columns?.length ?? 0) }
+        : sizeOf(m.id),
+    );
+  }
 
   // Top-level layout of modules (imports + cross-module calls/extends).
   const topAncestor = (nodeId: string): string | null => {
@@ -203,6 +247,15 @@ function layout(graph: Graph): Layout {
         draggable: false,
       };
     }
+    if (n.type === "table") {
+      return {
+        id: n.id,
+        type: "table",
+        data: { label: n.label, columns: n.columns ?? [] },
+        position,
+        style: { width: size.w },
+      };
+    }
     return {
       id: n.id,
       data: { label: n.label },
@@ -215,7 +268,13 @@ function layout(graph: Graph): Layout {
   });
 
   const edgeColor = (kind: string) =>
-    kind === "imports" ? IMPORT_COLOR : kind === "extends" ? EXTENDS_COLOR : CALL_COLOR;
+    kind === "imports"
+      ? IMPORT_COLOR
+      : kind === "extends"
+        ? EXTENDS_COLOR
+        : kind === "references"
+          ? REF_COLOR
+          : CALL_COLOR;
 
   const edges: Edge[] = graph.edges.map((e, i) => ({
     id: `e${i}`,
@@ -223,6 +282,9 @@ function layout(graph: Graph): Layout {
     target: e.target,
     data: { kind: e.kind },
     animated: e.kind === "calls",
+    label: e.kind === "references" ? e.cardinality : undefined,
+    labelStyle: { fill: REF_COLOR, fontSize: 10, fontFamily: "ui-monospace, monospace" },
+    labelBgStyle: { fill: "#13151b" },
     markerEnd: { type: MarkerType.ArrowClosed, color: edgeColor(e.kind) },
     style: {
       stroke: edgeColor(e.kind),
@@ -237,6 +299,7 @@ const LEGEND: { color: string; label: string; dashed: boolean }[] = [
   { color: CALL_COLOR, label: "calls", dashed: false },
   { color: IMPORT_COLOR, label: "imports", dashed: true },
   { color: EXTENDS_COLOR, label: "extends", dashed: true },
+  { color: REF_COLOR, label: "references", dashed: true },
 ];
 
 export default function Diagram({
@@ -248,6 +311,11 @@ export default function Diagram({
 }) {
   const { nodes, edges } = useMemo(() => layout(graph), [graph]);
   const [hidden, setHidden] = useState<Set<string>>(new Set());
+
+  const legend = useMemo(() => {
+    const present = new Set(graph.edges.map((e) => e.kind));
+    return LEGEND.filter((l) => present.has(l.label as Graph["edges"][number]["kind"]));
+  }, [graph]);
 
   const shownEdges = useMemo(
     () => edges.filter((e) => !hidden.has((e.data as { kind: string }).kind)),
@@ -285,7 +353,7 @@ export default function Diagram({
         position="top-left"
         className="flex gap-2 rounded-lg border border-white/10 bg-black/70 px-2 py-1.5 text-[11px] backdrop-blur"
       >
-        {LEGEND.map((l) => {
+        {legend.map((l) => {
           const off = hidden.has(l.label);
           return (
             <button

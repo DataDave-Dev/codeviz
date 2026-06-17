@@ -58,8 +58,10 @@ export default function Languages({ lang }: { lang: Locale }) {
       <>
         <H1>Lenguajes</H1>
         <Lead>
-          Weftmap soporta cinco lenguajes hoy. La arquitectura es ampliable: cada
+          Weftmap soporta seis lenguajes hoy. La arquitectura es ampliable: cada
           lenguaje es una gramática de tree-sitter más un conjunto de consultas.
+          Cinco generan un <strong>call graph</strong>; SQL genera un diagrama
+          <strong> entidad-relación</strong>.
         </Lead>
 
         <Matrix headers={["Lenguaje", "Funciones", "Clases", "Imports", "Herencia"]} />
@@ -71,12 +73,14 @@ export default function Languages({ lang }: { lang: Locale }) {
           <LI><strong>TypeScript</strong> — igual que JavaScript pero con la gramática dedicada, así las anotaciones de tipos se parsean sin problemas.</LI>
           <LI><strong>Go</strong> — funciones y métodos. Go no tiene clases, así que no hay nodos de clase ni herencia.</LI>
           <LI><strong>Rust</strong> — funciones y llamadas. La resolución entre archivos usa definiciones únicas.</LI>
+          <LI><strong>SQL</strong> — diagrama ER a partir de DDL (<Code>CREATE TABLE</Code>, <Code>ALTER TABLE</Code>): tablas con columnas y tipos, claves PK/FK, relaciones por foreign key con cardinalidad (1:1, 1:N y N:M vía tablas puente). Orientado a PostgreSQL.</LI>
         </UL>
 
         <Callout kind="warn">
           En Go y Rust los imports son por paquete o módulo (no por archivo), así que no se dibujan
           aristas de import. Las llamadas entre archivos del mismo paquete sí se
-          resuelven por nombre.
+          resuelven por nombre. SQL es un tipo de diagrama distinto: en lugar de
+          funciones y llamadas, dibuja tablas y relaciones.
         </Callout>
       </>
     );
@@ -86,8 +90,10 @@ export default function Languages({ lang }: { lang: Locale }) {
     <>
       <H1>Languages</H1>
       <Lead>
-        Weftmap supports five languages today. The architecture is extensible: each
-        language is a tree-sitter grammar plus a set of queries.
+        Weftmap supports six languages today. The architecture is extensible: each
+        language is a tree-sitter grammar plus a set of queries. Five produce a
+        <strong> call graph</strong>; SQL produces an{" "}
+        <strong>entity-relationship</strong> diagram.
       </Lead>
 
       <Matrix headers={["Language", "Functions", "Classes", "Imports", "Inheritance"]} />
@@ -99,11 +105,14 @@ export default function Languages({ lang }: { lang: Locale }) {
         <LI><strong>TypeScript</strong> — same as JavaScript but with the dedicated grammar, so type annotations parse cleanly.</LI>
         <LI><strong>Go</strong> — functions and methods. Go has no classes, so there are no class nodes or inheritance.</LI>
         <LI><strong>Rust</strong> — functions and calls. Cross-file resolution uses unique definitions.</LI>
+        <LI><strong>SQL</strong> — ER diagram from DDL (<Code>CREATE TABLE</Code>, <Code>ALTER TABLE</Code>): tables with columns and types, PK/FK keys, and foreign-key relationships with cardinality (1:1, 1:N, and N:M via junction tables). PostgreSQL-oriented.</LI>
       </UL>
 
       <Callout kind="warn">
         In Go and Rust, imports are package- or module-based (not file-based), so import edges are not
         drawn. Calls between files in the same package are still resolved by name.
+        SQL is a different diagram type: instead of functions and calls, it draws
+        tables and relationships.
       </Callout>
     </>
   );

@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Diagram from "./Diagram";
 import type { Graph } from "@/lib/analysis/types";
 
-const LANGUAGES = ["python", "javascript", "typescript", "go", "rust"];
+const LANGUAGES = ["python", "javascript", "typescript", "go", "rust", "sql"];
 
 const EXT: Record<string, string> = {
   python: "py",
@@ -12,6 +12,7 @@ const EXT: Record<string, string> = {
   typescript: "ts",
   go: "go",
   rust: "rs",
+  sql: "sql",
 };
 
 const PROJECT_EXTS: Record<string, string[]> = {
@@ -20,6 +21,7 @@ const PROJECT_EXTS: Record<string, string[]> = {
   typescript: [".ts", ".tsx"],
   go: [".go"],
   rust: [".rs"],
+  sql: [".sql"],
 };
 
 const IGNORE_DIR =
@@ -136,6 +138,30 @@ fn save(x: Vec<i32>) {
     write(x);
 }
 `,
+  sql: `CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  email VARCHAR(255) NOT NULL UNIQUE
+);
+
+CREATE TABLE posts (
+  id SERIAL PRIMARY KEY,
+  author_id INTEGER NOT NULL REFERENCES users (id),
+  title TEXT NOT NULL
+);
+
+CREATE TABLE tags (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(64) NOT NULL UNIQUE
+);
+
+CREATE TABLE post_tags (
+  post_id INTEGER NOT NULL,
+  tag_id INTEGER NOT NULL,
+  PRIMARY KEY (post_id, tag_id),
+  FOREIGN KEY (post_id) REFERENCES posts (id),
+  FOREIGN KEY (tag_id) REFERENCES tags (id)
+);
+`,
 };
 
 const SAMPLE_VALUES = Object.values(SAMPLES);
@@ -149,6 +175,7 @@ type Props = {
   inputPlaceholder: string;
   diagramPlaceholder: string;
   noFunctions: string;
+  noTables: string;
   snippetTab: string;
   projectTab: string;
   uploadFolder: string;
@@ -162,6 +189,7 @@ export default function CodeWorkspace({
   inputPlaceholder,
   diagramPlaceholder,
   noFunctions,
+  noTables,
   snippetTab,
   projectTab,
   uploadFolder,
@@ -450,7 +478,7 @@ export default function CodeWorkspace({
             <span className="w-3 h-3 rounded-full bg-white/15" />
             <span className="w-3 h-3 rounded-full bg-white/15" />
             <span className="ml-3 font-mono text-[11px] uppercase tracking-wide text-muted/70">
-              call graph
+              {language === "sql" ? "schema diagram" : "call graph"}
             </span>
           </div>
           {graph && (
@@ -472,7 +500,7 @@ export default function CodeWorkspace({
                 {error}
               </div>
             ) : graph ? (
-              <Diagram graph={graph} emptyLabel={noFunctions} />
+              <Diagram graph={graph} emptyLabel={language === "sql" ? noTables : noFunctions} />
             ) : (
               <div className="grid place-items-center h-full px-6 text-center text-sm text-muted">
                 {diagramPlaceholder}

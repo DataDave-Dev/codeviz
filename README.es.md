@@ -16,8 +16,9 @@ backend adapta el análisis según el lenguaje, y agregar uno nuevo toma unas po
 líneas. No existe una herramienta libre que haga esto bien para varios lenguajes
 a la vez.
 
-> **Estado:** MVP. Soporta **Python**, **JavaScript/TypeScript**, **Go** y **Rust**. Tipo
-> de diagrama: call graph (funciones como nodos, llamadas como flechas).
+> **Estado:** MVP. Soporta **Python**, **JavaScript/TypeScript**, **Go**, **Rust** y **SQL**.
+> Tipos de diagrama: call graph (funciones como nodos, llamadas como flechas) y,
+> para SQL, entidad-relación (tablas como nodos, foreign keys como aristas).
 
 ---
 
@@ -155,6 +156,7 @@ Las tareas para empezar están etiquetadas como [`good first issue`](https://git
 **Hecho**
 
 - [x] Call graph para Python, JavaScript, TypeScript, Go y Rust
+- [x] Diagramas de esquema SQL (ER / UML): tablas, columnas, PK/FK, relaciones
 - [x] Arquitectura pluggable por lenguaje (añadir uno son pocas líneas)
 - [x] UI bilingüe (en/es) con docs in-app
 
@@ -170,7 +172,6 @@ Las tareas para empezar están etiquetadas como [`good first issue`](https://git
 - [ ] Modo proyecto: analizar una carpeta entera como un solo grafo
 - [ ] Interacción en nodos: click para resaltar llamadores/llamados, panel de detalle
 - [ ] Más tipos de diagrama: control-flow y dependencias entre módulos
-- [ ] **Soporte SQL**: diagramas ER / UML de esquema (tablas, columnas, relaciones) a partir de DDL SQL ([#19](https://github.com/DataDave-Dev/weftmap/issues/19))
 - [ ] Exportar el grafo (PNG/SVG) y permalinks para compartir
 - [ ] Más métodos de entrada: subir ZIP y URL de repo de GitHub
 - [ ] Rendimiento para bases de código grandes
