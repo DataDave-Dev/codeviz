@@ -29,6 +29,19 @@ export default function HowItWorks({ lang }: { lang: Locale }) {
           <LI><EdgeDot kind="extends" /> <Code>extends</Code> — entre clases.</LI>
         </UL>
 
+        <H2>SQL: otro tipo de diagrama</H2>
+        <P>
+          SQL no produce un call graph sino un diagrama entidad-relación: las tablas
+          son nodos (con columnas y claves PK/FK) y las foreign keys son aristas
+          <Code>references</Code> con cardinalidad. Más detalle en <Code>Leer el diagrama</Code>.
+        </P>
+
+        <H2>Seguridad y rendimiento</H2>
+        <UL>
+          <LI>El parseo de cada archivo tiene un tope de tiempo para que una entrada patológica no bloquee el servidor.</LI>
+          <LI>Hay límites de 2 MB y 400 archivos por análisis (ver <Code>Referencia de la API</Code>).</LI>
+        </UL>
+
         <H2>Límites conocidos</H2>
         <P>El análisis es por <strong>nombre</strong>, no por tipo ni alcance. Eso implica:</P>
         <UL>
@@ -72,6 +85,19 @@ export default function HowItWorks({ lang }: { lang: Locale }) {
         <LI><EdgeDot kind="calls" /> <Code>calls</Code> — between functions/methods.</LI>
         <LI><EdgeDot kind="imports" /> <Code>imports</Code> — between modules.</LI>
         <LI><EdgeDot kind="extends" /> <Code>extends</Code> — between classes.</LI>
+      </UL>
+
+      <H2>SQL: a different diagram type</H2>
+      <P>
+        SQL produces an entity-relationship diagram, not a call graph: tables are
+        nodes (with columns and PK/FK keys) and foreign keys are <Code>references</Code>
+        edges with cardinality. More in <Code>Reading the diagram</Code>.
+      </P>
+
+      <H2>Safety &amp; performance</H2>
+      <UL>
+        <LI>Parsing each file is time-capped so a pathological input can&apos;t block the server.</LI>
+        <LI>There are 2 MB and 400-file limits per analysis (see <Code>API reference</Code>).</LI>
       </UL>
 
       <H2>Known limitations</H2>

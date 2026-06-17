@@ -40,6 +40,20 @@ export default function Introduction({ lang }: { lang: Locale }) {
           <LI>Los recuadros agrupan: los módulos contienen clases y funciones; las clases contienen sus métodos.</LI>
         </UL>
 
+        <H2>Cuándo usarlo</H2>
+        <UL>
+          <LI>Entrar a un código nuevo y entender su estructura antes de leerlo línea por línea.</LI>
+          <LI>Revisar un PR viendo cómo se conecta una función con el resto.</LI>
+          <LI>Enseñar o documentar convirtiendo código en un diagrama.</LI>
+        </UL>
+
+        <H2>Qué no hace</H2>
+        <UL>
+          <LI>No ejecuta tu código ni hace análisis dinámico.</LI>
+          <LI>No resuelve llamadas dinámicas o por reflexión, ni dibuja llamadas a librerías externas.</LI>
+          <LI>No es un linter ni un type-checker: solo mapea la estructura.</LI>
+        </UL>
+
         <Callout>
           ¿Listo para probar? Continúa con <strong>Empezar</strong>.
         </Callout>
@@ -81,6 +95,20 @@ export default function Introduction({ lang }: { lang: Locale }) {
         <LI>Drag to pan the canvas and scroll to zoom.</LI>
         <LI>The legend (top-left) toggles each edge type with a click.</LI>
         <LI>Boxes group things: modules contain classes and functions; classes contain their methods.</LI>
+      </UL>
+
+      <H2>When to use it</H2>
+      <UL>
+        <LI>Onboarding to a new codebase and grasping its structure before reading line by line.</LI>
+        <LI>Reviewing a PR by seeing how a function connects to the rest.</LI>
+        <LI>Teaching or documenting by turning code into a diagram.</LI>
+      </UL>
+
+      <H2>What it doesn&apos;t do</H2>
+      <UL>
+        <LI>It never runs your code or does dynamic analysis.</LI>
+        <LI>It doesn&apos;t resolve dynamic/reflection calls, nor draw calls to external libraries.</LI>
+        <LI>It&apos;s not a linter or type-checker — it only maps structure.</LI>
       </UL>
 
       <Callout>
