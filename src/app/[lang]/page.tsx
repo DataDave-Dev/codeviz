@@ -8,6 +8,7 @@ import Showcase from "@/components/sections/Showcase";
 import SupportedLanguages from "@/components/sections/SupportedLanguages";
 import UseCases from "@/components/sections/UseCases";
 import Faq from "@/components/sections/Faq";
+import Testimonials from "@/components/sections/Testimonials";
 import CallToAction from "@/components/sections/CallToAction";
 import ScrollReveal from "@/components/ui/ScrollReveal";
 
@@ -52,6 +53,7 @@ export default async function Home({
       />
       <UseCases title={t.useCasesTitle} items={t.useCases} />
       <Faq title={t.faqTitle} items={t.faqs} />
+      <Testimonials lang={lang} />
       <CallToAction
         title={t.ctaTitle}
         desc={t.ctaDesc}

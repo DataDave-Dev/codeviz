@@ -152,5 +152,25 @@
   "notFoundTitle": "This page got lost in the graph",
   "notFoundDesc": "The link may be broken or the page may have moved. Let's get you back on track.",
   "notFoundHome": "Back home",
-  "notFoundApp": "Open the app"
+  "notFoundApp": "Open the app",
+  "auth": {
+    "signIn": "Sign in",
+    "signOut": "Sign out",
+    "myGraphs": "My graphs",
+    "save": "Save graph",
+    "saved": "Saved ✓",
+    "signInToSave": "Sign in to save",
+    "graphsTitle": "My graphs",
+    "graphsEmpty": "You haven't saved any graphs yet.",
+    "graphsSignIn": "Sign in to view your saved graphs.",
+    "open": "Open",
+    "delete": "Delete",
+    "testimonialsTitle": "What people say",
+    "testimonialsSubtitle": "Experiences from people using Weftmap.",
+    "testimonialPlaceholder": "Share your experience using Weftmap…",
+    "testimonialSubmit": "Post",
+    "testimonialSignIn": "Sign in to share your experience.",
+    "testimonialsEmpty": "Be the first to share your experience.",
+    "testimonialThanks": "Thanks for sharing!"
+  }
 }

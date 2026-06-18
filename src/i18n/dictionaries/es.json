@@ -152,5 +152,25 @@
   "notFoundTitle": "Esta página se perdió en el grafo",
   "notFoundDesc": "El enlace puede estar roto o la página se movió. Volvamos al camino.",
   "notFoundHome": "Volver al inicio",
-  "notFoundApp": "Abrir la app"
+  "notFoundApp": "Abrir la app",
+  "auth": {
+    "signIn": "Iniciar sesión",
+    "signOut": "Cerrar sesión",
+    "myGraphs": "Mis grafos",
+    "save": "Guardar grafo",
+    "saved": "Guardado ✓",
+    "signInToSave": "Inicia sesión para guardar",
+    "graphsTitle": "Mis grafos",
+    "graphsEmpty": "Todavía no has guardado ningún grafo.",
+    "graphsSignIn": "Inicia sesión para ver tus grafos guardados.",
+    "open": "Abrir",
+    "delete": "Eliminar",
+    "testimonialsTitle": "Lo que dice la gente",
+    "testimonialsSubtitle": "Experiencias de quienes usan Weftmap.",
+    "testimonialPlaceholder": "Comparte tu experiencia usando Weftmap…",
+    "testimonialSubmit": "Publicar",
+    "testimonialSignIn": "Inicia sesión para compartir tu experiencia.",
+    "testimonialsEmpty": "Sé el primero en compartir tu experiencia.",
+    "testimonialThanks": "¡Gracias por compartir!"
+  }
 }

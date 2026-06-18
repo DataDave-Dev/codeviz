@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getDictionary } from "@/i18n/dictionaries";
 import { isLocale } from "@/i18n/config";
+import { auth } from "@/auth";
 import CodeWorkspace from "@/components/ui/CodeWorkspace";
 
 export const metadata: Metadata = {
@@ -16,6 +17,7 @@ export default async function AppPage({
   const { lang } = await params;
   if (!isLocale(lang)) notFound();
   const t = getDictionary(lang);
+  const session = await auth();
 
   return (
     <>
@@ -31,6 +33,10 @@ export default async function AppPage({
         projectTab={t.projectTab}
         uploadFolder={t.uploadFolder}
         projectHint={t.projectHint}
+        isAuthed={!!session?.user}
+        saveLabel={t.auth.save}
+        savedLabel={t.auth.saved}
+        signInToSaveLabel={t.auth.signInToSave}
       />
     </>
   );

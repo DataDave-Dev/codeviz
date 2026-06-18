@@ -13,7 +13,7 @@ function buildCsp(nonce: string): string {
     "form-action 'self'",
     "frame-ancestors 'none'",
     "object-src 'none'",
-    "img-src 'self' data:",
+    "img-src 'self' data: https://avatars.githubusercontent.com",
     "font-src 'self' data:",
     "connect-src 'self'",
     `script-src 'self' 'nonce-${nonce}'${isDev ? " 'unsafe-eval'" : ""}`,

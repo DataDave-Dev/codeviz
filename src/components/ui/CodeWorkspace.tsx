@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Diagram from "./Diagram";
+import { saveGraph } from "@/lib/graphs";
 import type { Graph } from "@/lib/analysis/types";
 
 const LANGUAGES = ["python", "javascript", "typescript", "go", "rust", "sql"];
@@ -180,6 +181,10 @@ type Props = {
   projectTab: string;
   uploadFolder: string;
   projectHint: string;
+  isAuthed: boolean;
+  saveLabel: string;
+  savedLabel: string;
+  signInToSaveLabel: string;
 };
 
 export default function CodeWorkspace({
@@ -194,6 +199,10 @@ export default function CodeWorkspace({
   projectTab,
   uploadFolder,
   projectHint,
+  isAuthed,
+  saveLabel,
+  savedLabel,
+  signInToSaveLabel,
 }: Props) {
   const [mode, setMode] = useState<"snippet" | "project">("snippet");
   const [code, setCode] = useState(SAMPLES.python);
@@ -202,6 +211,8 @@ export default function CodeWorkspace({
   const [graph, setGraph] = useState<Graph | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
   const [editorWidth, setEditorWidth] = useState(44); // % of the split, lg+ only
   const gutterRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -292,6 +303,30 @@ export default function CodeWorkspace({
       setGraph(null);
     } finally {
       setIsLoading(false);
+    }
+  }
+
+  async function handleSave() {
+    if (!graph || saving) return;
+    const fallback = `${language} · ${new Date().toLocaleDateString()}`;
+    const title = window.prompt(saveLabel, fallback);
+    if (title === null) return; // cancelled
+    const source =
+      mode === "project" ? { files: files ?? [] } : { code: code.trim() };
+    setSaving(true);
+    try {
+      await saveGraph({
+        title: title.trim() || fallback,
+        language,
+        graph,
+        source,
+      });
+      setSaved(true);
+      window.setTimeout(() => setSaved(false), 2500);
+    } catch {
+      window.alert("Error");
+    } finally {
+      setSaving(false);
     }
   }
 
@@ -500,9 +535,24 @@ export default function CodeWorkspace({
             </span>
           </div>
           {graph && (
-            <span className="font-mono text-[11px] text-[#64748b] dark:text-[#7c8696]">
-              {graph.nodes.length} nodes · {graph.edges.length} edges
-            </span>
+            <div className="flex items-center gap-3">
+              <span className="font-mono text-[11px] text-[#64748b] dark:text-[#7c8696]">
+                {graph.nodes.length} nodes · {graph.edges.length} edges
+              </span>
+              {isAuthed ? (
+                <button
+                  onClick={handleSave}
+                  disabled={saving}
+                  className="rounded-full border border-[#e2e8f0] dark:border-[#232a36] px-3 py-1 text-[12px] font-medium text-[#475569] dark:text-[#9aa6b8] transition-colors hover:border-[#4f46e5] hover:text-[#0f172a] disabled:opacity-50"
+                >
+                  {saved ? savedLabel : saveLabel}
+                </button>
+              ) : (
+                <span className="text-[11px] text-[#94a3b8]">
+                  {signInToSaveLabel}
+                </span>
+              )}
+            </div>
           )}
         </div>
 

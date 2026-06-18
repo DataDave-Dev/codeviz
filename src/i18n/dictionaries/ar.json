@@ -156,5 +156,25 @@
   "notFoundTitle": "هذه الصفحة تاهت في المخطط",
   "notFoundDesc": "ربما الرابط تالف أو تم نقل الصفحة. لنعدك إلى المسار الصحيح.",
   "notFoundHome": "العودة للرئيسية",
-  "notFoundApp": "افتح التطبيق"
+  "notFoundApp": "افتح التطبيق",
+  "auth": {
+    "signIn": "تسجيل الدخول",
+    "signOut": "تسجيل الخروج",
+    "myGraphs": "مخططاتي",
+    "save": "حفظ المخطط",
+    "saved": "تم الحفظ ✓",
+    "signInToSave": "سجّل الدخول للحفظ",
+    "graphsTitle": "مخططاتي",
+    "graphsEmpty": "لم تحفظ أي مخطط بعد.",
+    "graphsSignIn": "سجّل الدخول لعرض مخططاتك المحفوظة.",
+    "open": "فتح",
+    "delete": "حذف",
+    "testimonialsTitle": "ماذا يقول الناس",
+    "testimonialsSubtitle": "تجارب من يستخدمون Weftmap.",
+    "testimonialPlaceholder": "شارك تجربتك في استخدام Weftmap…",
+    "testimonialSubmit": "نشر",
+    "testimonialSignIn": "سجّل الدخول لمشاركة تجربتك.",
+    "testimonialsEmpty": "كن أول من يشارك تجربته.",
+    "testimonialThanks": "شكرًا على المشاركة!"
+  }
 }

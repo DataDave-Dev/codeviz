@@ -5,8 +5,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { locales, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
+import { signInGitHub, signOutAction } from "@/lib/auth-actions";
 import Logo from "./Logo";
 import ThemeToggle from "./ThemeToggle";
+
+type HeaderUser = { name?: string | null; image?: string | null };
 
 const REPO = "https://github.com/DataDave-Dev/weftmap";
 
@@ -31,7 +34,13 @@ const LANGUAGE_NAMES: Record<string, string> = {
   it: "Italiano",
 };
 
-export default function Header({ lang }: { lang: Locale }) {
+export default function Header({
+  lang,
+  user,
+}: {
+  lang: Locale;
+  user: HeaderUser | null;
+}) {
   const t = getDictionary(lang);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const pathname = usePathname();
@@ -122,6 +131,42 @@ export default function Header({ lang }: { lang: Locale }) {
         >
           {t.getStarted}
         </Link>
+
+        {user ? (
+          <div className="flex shrink-0 items-center gap-1">
+            <Link href={`/${lang}/graphs`} className={linkClass}>
+              {t.auth.myGraphs}
+            </Link>
+            <form action={signOutAction}>
+              <button
+                type="submit"
+                title={t.auth.signOut}
+                className="flex items-center gap-2 rounded-full p-0.5 pr-2 text-[13px] text-[#475569] transition-colors hover:bg-black/[0.04] hover:text-[#0f172a] dark:text-[#94a3b8] dark:hover:bg-white/[0.06] dark:hover:text-[#e6e9ef]"
+              >
+                {user.image ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={user.image}
+                    alt={user.name ?? ""}
+                    width={26}
+                    height={26}
+                    className="rounded-full"
+                  />
+                ) : null}
+                <span className="hidden sm:inline">{t.auth.signOut}</span>
+              </button>
+            </form>
+          </div>
+        ) : (
+          <form action={signInGitHub} className="shrink-0">
+            <button
+              type="submit"
+              className="whitespace-nowrap rounded-full border border-[#e2e8f0] px-3.5 py-1.5 text-[13px] font-semibold text-[#0f172a] transition hover:bg-black/[0.04] dark:border-white/[0.14] dark:text-[#e6e9ef] dark:hover:bg-white/[0.06]"
+            >
+              {t.auth.signIn}
+            </button>
+          </form>
+        )}
 
         <div className="relative shrink-0">
           <button
