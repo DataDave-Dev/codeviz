@@ -9,6 +9,10 @@ updates:
       # ESLint 10 needs eslint-plugin-react with the new flat API; hold until compatible.
       - dependency-name: "eslint"
         versions: [">=10"]
+      # web-tree-sitter 0.23+ ships a breaking API (no default export, new Parser/Language shape).
+      # Holds until the analyzer code is migrated (see revert #129).
+      - dependency-name: "web-tree-sitter"
+        versions: [">=0.23"]
 
   # 2. Update GitHub Actions workflows
   - package-ecosystem: "github-actions"
