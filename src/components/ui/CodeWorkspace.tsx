@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Diagram from "./Diagram";
 import { saveGraph } from "@/lib/graphs";
 import type { Graph } from "@/lib/analysis/types";
@@ -275,7 +275,7 @@ export default function CodeWorkspace({
     setFiles(kept);
   }
 
-  async function analyze() {
+  const analyze = useCallback(async () => {
     if (isLoading) return;
     let body: Record<string, unknown>;
     if (mode === "project") {
@@ -304,7 +304,7 @@ export default function CodeWorkspace({
     } finally {
       setIsLoading(false);
     }
-  }
+  }, [isLoading, mode, files, language, code, setGraph, setError, setIsLoading]);
 
   async function handleSave() {
     if (!graph || saving) return;
@@ -340,12 +340,7 @@ export default function CodeWorkspace({
     setFiles(null); // file extensions differ per language
   }
 
-  function onKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
-    if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
-      e.preventDefault();
-      analyze();
-    }
-  }
+
 
   function syncScroll(e: React.UIEvent<HTMLTextAreaElement>) {
     if (gutterRef.current)
@@ -355,6 +350,21 @@ export default function CodeWorkspace({
   const canAnalyze =
     !isLoading &&
     (mode === "snippet" ? code.trim() !== "" : (files?.length ?? 0) > 0);
+
+  useEffect(() => {
+    function handleGlobalKeyDown(e: KeyboardEvent) {
+      if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+        if (canAnalyze) {
+          e.preventDefault();
+          analyze();
+        }
+      }
+    }
+    window.addEventListener("keydown", handleGlobalKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleGlobalKeyDown);
+    };
+  }, [canAnalyze, analyze]);
 
   const tab = (value: "snippet" | "project", label: string) => (
     <button
@@ -415,10 +425,9 @@ export default function CodeWorkspace({
                 <div key={i}>{i + 1}</div>
               ))}
             </div>
-            <textarea
+             <textarea
               value={code}
               onChange={(e) => setCode(e.target.value)}
-              onKeyDown={onKeyDown}
               onScroll={syncScroll}
               spellCheck={false}
               placeholder={inputPlaceholder}
