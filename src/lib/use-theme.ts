@@ -1,7 +1,6 @@
 "use client";
 
-import { useSyncExternalStore, useEffect } from "react";
-import { usePathname } from "next/navigation";
+import { useSyncExternalStore } from "react";
 
 function subscribe(cb: () => void) {
   const obs = new MutationObserver(cb);
@@ -12,22 +11,10 @@ function subscribe(cb: () => void) {
   return () => obs.disconnect();
 }
 
+// moved the call directly to ThemeToggle
+
 /** Tracks whether the `dark` class is set on <html>, reactively. */
 export function useIsDark() {
-  const pathname = usePathname();
-
-  useEffect(() => {
-    try {
-      const theme = localStorage.getItem("theme");
-      const d = theme
-        ? theme === "dark"
-        : window.matchMedia("(prefers-color-scheme: dark)").matches;
-      document.documentElement.classList.toggle("dark", d);
-    } catch (e) {
-      console.error(e);
-    }
-  }, [pathname]);
-
   return useSyncExternalStore(
     subscribe,
     () => document.documentElement.classList.contains("dark"),

@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import type { Metadata } from "next";
-import { headers } from "next/headers";
+import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import { locales, isLocale, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
@@ -31,22 +31,24 @@ export default async function RootLayout({
 }) {
   const { lang } = await params;
   if (!isLocale(lang)) notFound();
+
+  // read a theme from cookies instead of headers
+  const cookieStore = await cookies();
+  const themeCookie = cookieStore.get("theme");
+  const isDark = themeCookie?.value === "dark";
+
   const t = getDictionary(lang as Locale);
-  const nonce = (await headers()).get("x-nonce") ?? undefined;
   const [session, stars] = await Promise.all([auth(), getRepoStars()]);
 
   return (
     <html
       lang={lang as Locale}
       dir={lang === "ar" ? "rtl" : "ltr"}
+      className={isDark ? "dark" : ""}
       suppressHydrationWarning
     >
       <head>
         <script
-          nonce={nonce}
-          type={
-            typeof window === "undefined" ? "text/javascript" : "text/plain"
-          }
           suppressHydrationWarning
           dangerouslySetInnerHTML={{
             __html: `(function(){try{var t=localStorage.getItem('theme');var d=t?t==='dark':matchMedia('(prefers-color-scheme:dark)').matches;if(d)document.documentElement.classList.add('dark');}catch(e){}})();`,
