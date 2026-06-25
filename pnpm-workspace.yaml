@@ -1,5 +1,5 @@
 allowBuilds:
-  core-js: false
+  core-js: true
   esbuild: true
   sharp: false
   unrs-resolver: false
