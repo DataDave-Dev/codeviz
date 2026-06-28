@@ -7,6 +7,9 @@ export default defineConfig({
     include: ["src/**/*.test.ts"],
   },
   resolve: {
-    alias: { "@": fileURLToPath(new URL("./src", import.meta.url)) },
+    alias: {
+      "@": fileURLToPath(new URL("./src", import.meta.url)),
+      "reactflow/dist/style.css": fileURLToPath(new URL("./src/test/mocks/styleMock.js", import.meta.url)),
+    },
   },
 });
